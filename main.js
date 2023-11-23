@@ -108,21 +108,7 @@ class Jablotron extends utils.Adapter {
 	}
 
 	async createObjectStructure() {
-		await this.setObjectNotExistsAsync('status.alarm', {
-			type: 'state',
-			common: {
-				name: 'Alarm status',
-				type: 'number',
-				role: 'level',
-				read: true,
-				write: true,
-				states: '0:disarm;1:home;2:arm;3:alarm',
-				min: 0,
-				max: 3,
-			},
-			native: {},
-		});
-
+		await this.setObjectNotExistsAsync('status.alarm', { type: 'state', common: { name: 'Alarm status', type: 'number', role: 'level', read: true, write: true, states: '0:disarm;1:home;2:arm;3:alarm', min: 0, max: 3 }, native: {},});
 	}
 
 }
