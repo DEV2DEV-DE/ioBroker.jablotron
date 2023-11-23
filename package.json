@@ -16,7 +16,7 @@
     "url": "https://github.com/DEV2DEV-DE/ioBroker.jablotron.git"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 16"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.4"
