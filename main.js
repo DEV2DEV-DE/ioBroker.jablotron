@@ -26,38 +26,24 @@ class Jablotron extends utils.Adapter {
 		this.on('unload', this.onUnload.bind(this));
 
 		this.connected = false;
+		axios.defaults.withCredentials = true; // force axios to use cookies
 	}
 
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		// Initialize your adapter here
+		// Create all states needed for the adapter
+		await this.createObjectStructure();
 
 		if (!this.connected) {
 			try {
-				this.login();
+				const result = await this.login(this.config.username, this.config.password);
+				if (result) this.connected = true;
 			} catch (error) {
 				this.log.error(error);
 			}
 		}
-
-		/*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
-		await this.setObjectNotExistsAsync('testVariable', {
-			type: 'state',
-			common: {
-				name: 'testVariable',
-				type: 'boolean',
-				role: 'indicator',
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
 
 		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
 		this.subscribeStates('testVariable');
@@ -82,18 +68,28 @@ class Jablotron extends utils.Adapter {
 
 	}
 
-	async login() {
-		const username = this.config.username;
-		const password = this.config.password;
-		const url = `${baseUrl}/ajax/login.php`;
-		const data = {
-			username,
-			password,
-		};
-		const response = await axios.post(url, data);
-		const { token } = response.data;
-		this.log.info(`Logged in with token ${token}`);
-		return token;
+	/**
+	 * Login to jablonet.net
+	 * @param {string} username
+	 * @param {string} password
+	 */
+	async login(username, password) {
+		try {
+			const url = `${baseUrl}/ajax/login.php`;
+			const data = {
+				'login': encodeURIComponent(username),
+				'heslo': encodeURIComponent(password),
+				'aStatus': 200,
+				'loginType': 'Login'
+			};
+			const response = await axios.get(url, { params: data });
+			this.log.info('Logged in to jablonet.net');
+			this.log.debug(JSON.stringify(response));
+			return true;
+		} catch (error) {
+			this.log.error(error);
+			return false;
+		}
 	}
 
 	/**
@@ -127,6 +123,24 @@ class Jablotron extends utils.Adapter {
 			// The state was deleted
 			this.log.info(`state ${id} deleted`);
 		}
+	}
+
+	async createObjectStructure() {
+		await this.setObjectNotExistsAsync('status.alarm', {
+			type: 'state',
+			common: {
+				name: 'Alarm status',
+				type: 'number',
+				role: 'level',
+				read: true,
+				write: true,
+				states: '0:disarm;1:home;2:arm;3:alarm',
+				min: 0,
+				max: 3,
+			},
+			native: {},
+		});
+
 	}
 
 }
