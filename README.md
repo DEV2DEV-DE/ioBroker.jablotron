@@ -10,12 +10,15 @@
 
 **Tests:** ![Test and Release](https://github.com/DEV2DEV-DE/ioBroker.jablotron/workflows/Test%20and%20Release/badge.svg)
 
-## jablotron adapter for ioBroker
+## Jablotron adapter for ioBroker
 
 Connects to the Jablotron cloud to access your security system
 
 ## Developer manual
-This section is intended for the developer. It can be deleted later.
+References
+* https://github.com/ioBroker/AdapterRequests/issues/755
+* https://github.com/hajekmi/myjablotron
+* https://github.com/fdegier/homebridge-jablotron-alarm
 
 ### DISCLAIMER
 
