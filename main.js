@@ -38,7 +38,7 @@ class Jablotron extends utils.Adapter {
 			try {
 				this.login();
 			} catch (error) {
-				this.log.error(error);				
+				this.log.error(error);
 			}
 		}
 
@@ -82,7 +82,7 @@ class Jablotron extends utils.Adapter {
 
 	}
 
-	async login() {	
+	async login() {
 		const username = this.config.username;
 		const password = this.config.password;
 		const url = `${baseUrl}/ajax/login.php`;
