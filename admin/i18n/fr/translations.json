@@ -1,5 +1,6 @@
 {
-	"jablotron adapter settings": "Paramètres d'adaptateur pour jablotron",
-	"option1": "Option 1",
-	"option2": "Option 2"
+	"jablotron adapter settings": "Adapter settings for jablotron",
+	"username": "Username",
+	"password": "Password",
+	"pollInterval": "Polling interval (in seconds)"
 }

@@ -1,5 +1,6 @@
 {
-	"jablotron adapter settings": "jablotron的适配器设置",
-	"option1": "选项1",
-	"option2": "选项2"
+	"jablotron adapter settings": "Adapter settings for jablotron",
+	"username": "Username",
+	"password": "Password",
+	"pollInterval": "Polling interval (in seconds)"
 }

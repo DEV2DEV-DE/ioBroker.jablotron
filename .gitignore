@@ -7,9 +7,6 @@
 node_modules
 nbproject
 
-# files with confidential data
-simpleLogin.js
-
 # npm package files
 iobroker.*.tgz
 
@@ -18,3 +15,8 @@ Thumbs.db
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
+
+# files with confidential data
+simpleLogin.js
+.vscode/launch.json
+.response.json

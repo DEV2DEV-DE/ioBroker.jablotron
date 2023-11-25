@@ -79,7 +79,8 @@
 	},
 	"native": {
 		"username": "",
-		"password": ""
+		"password": "",
+		"pollInterval": 60
 	},
 	"objects": [],
 	"instanceObjects": []

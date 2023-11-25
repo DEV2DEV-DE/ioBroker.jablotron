@@ -9,7 +9,7 @@
 const utils = require('@iobroker/adapter-core');
 const axios = require('axios').default;
 
-const baseUrl = 'https://www.jablonet.net';
+const baseUrl = 'https://api.jablonet.net/api/2.2';
 
 class Jablotron extends utils.Adapter {
 
@@ -26,6 +26,8 @@ class Jablotron extends utils.Adapter {
 		this.on('unload', this.onUnload.bind(this));
 
 		this.connected = false;
+		this.sessionId = '';
+		this.refreshInterval = undefined;
 		axios.defaults.withCredentials = true; // force axios to use cookies
 	}
 
@@ -38,15 +40,20 @@ class Jablotron extends utils.Adapter {
 
 		if (!this.connected) {
 			try {
-				const result = await this.login(this.config.username, this.config.password);
-				if (result) this.connected = true;
+				this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
+				this.connected = this.sessionId !== '';
 			} catch (error) {
 				this.log.error(error);
 			}
 		}
 
-		// subscribe to all state changes
-		this.subscribeStates('status.alarm');
+		if (this.connected) {
+			this.refreshInterval = setInterval(() => {
+			}, this.config.pollInterval * 1000);
+			// subscribe to all state changes
+			// this.subscribeStates('status.alarm');
+		}
+
 
 	}
 
@@ -55,22 +62,51 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} username
 	 * @param {string} password
 	 */
-	async login(username, password) {
+	async fetchSessionId(username, password) {
 		try {
-			const url = `${baseUrl}/ajax/login.php`;
+			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
-				'login': encodeURIComponent(username),
-				'heslo': encodeURIComponent(password),
-				'aStatus': 200,
-				'loginType': 'Login'
+				'login': username,
+				'password': password
 			};
-			const response = await axios.get(url, { params: data });
-			this.log.info('Logged in to jablonet.net');
-			this.log.debug(JSON.stringify(response));
-			return true;
+			const headers = {
+				'x-vendor-id': 'JABLOTRON:Jablotron',
+				'Content-Type': 'application/json',
+				'x-client-version': 'MYJ-PUB-ANDROID-12',
+				'accept-encoding': '*',
+				'Accept': 'application/json',
+				'Accept-Language': 'en'
+			};
+			const response = await axios.post(url, data, { headers });
+			if (!this.sessionId) this.log.info('Logged in to jablonet api');
+			const cookie = response.headers['set-cookie'];
+			if (cookie) {
+				const sessionId = cookie.toString().split(';')[0];
+				this.log.debug('Session-ID: ' + sessionId);
+				await this.parseResponse(response.data['service-data']);
+				return sessionId;
+			} else {
+				this.log.error('No session id found');
+				return '';
+			}
 		} catch (error) {
 			this.log.error(error);
-			return false;
+			return '';
+		}
+	}
+
+	async getCurrentStatus() {
+		this.fetchSessionId(this.config.username, this.config.password);
+	}
+
+	async parseResponse(data) {
+		if (data) {
+			const serviceDetail = data['service-detail'];
+			for (const key in serviceDetail) {
+				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
+				await this.setObjectNotExistsAsync(`service.${key}`, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
+				await this.setStateAsync(`service.${key}`, `${serviceDetail[key]}`, true);
+			}
 		}
 	}
 
@@ -80,12 +116,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			// Here you must clear all timeouts or intervals that may still be active
-			// clearTimeout(timeout1);
-			// clearTimeout(timeout2);
-			// ...
-			// clearInterval(interval1);
-
+			clearInterval(this.refreshInterval);
 			callback();
 		} catch (e) {
 			callback();
