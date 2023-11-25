@@ -7,6 +7,9 @@
 node_modules
 nbproject
 
+# files with confidential data
+simpleLogin.js
+
 # npm package files
 iobroker.*.tgz
 
