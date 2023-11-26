@@ -21,14 +21,15 @@ class Jablotron extends utils.Adapter {
 			...options,
 			name: 'jablotron',
 		});
-		this.on('ready', this.onReady.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
-		this.on('unload', this.onUnload.bind(this));
 
 		this.connected = false;
 		this.sessionId = '';
 		this.refreshInterval = undefined;
 		axios.defaults.withCredentials = true; // force axios to use cookies
+
+		this.on('ready', this.onReady.bind(this));
+		this.on('stateChange', this.onStateChange.bind(this));
+		this.on('unload', this.onUnload.bind(this));
 	}
 
 	/**
@@ -38,21 +39,20 @@ class Jablotron extends utils.Adapter {
 		// Create all states needed for the adapter
 		await this.createObjectStructure();
 
-		if (!this.connected) {
-			try {
-				this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
-				this.connected = this.sessionId !== '';
-				if (this.connected) {
-					this.setStateAsync('info.connection', { val: true, ack: true });
-					this.setForeignState('system.adapter.' + this.namespace + '.alive', true);
-				}
-			} catch (error) {
-				this.log.error(error);
+		try {
+			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
+			this.connected = this.sessionId !== '';
+			if (this.connected) {
+				this.setStateAsync('info.connection', { val: true, ack: true });
+				this.setForeignState('system.adapter.' + this.namespace + '.alive', true);
 			}
+		} catch (error) {
+			this.log.error(error);
 		}
 
 		if (this.connected) {
 			this.refreshInterval = setInterval(() => {
+				this.log.debug('Refreshing data');
 			}, this.config.pollInterval * 1000);
 			// subscribe to all state changes
 			// this.subscribeStates('status.alarm');
@@ -68,6 +68,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	async fetchSessionId(username, password) {
 		try {
+			this.log.debug('Fetching session id');
 			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
 				'login': username,
@@ -87,7 +88,7 @@ class Jablotron extends utils.Adapter {
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
 				this.log.debug('Session-ID: ' + sessionId);
-				await this.parseResponse(response.data['service-data']);
+				await this.parseResponse(response.data['data']['service-data']);
 				return sessionId;
 			} else {
 				this.log.error('No session id found');
@@ -107,8 +108,10 @@ class Jablotron extends utils.Adapter {
 	}
 
 	async parseResponse(data) {
+		this.log.debug('Parsing response');
+		this.log.debug(JSON.stringify(data));
 		if (data) {
-			const serviceDetail = data['data']['service-data']['service-detail'];
+			const serviceDetail = data['service-detail'];
 			for (const key in serviceDetail) {
 				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
 				await this.setObjectNotExistsAsync(`service.${key}`, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
@@ -147,6 +150,7 @@ class Jablotron extends utils.Adapter {
 
 	async createObjectStructure() {
 		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false}, native: {},});
+		this.log.debug('Created object structure');
 	}
 
 }
