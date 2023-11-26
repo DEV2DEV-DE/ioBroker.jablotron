@@ -108,7 +108,7 @@ class Jablotron extends utils.Adapter {
 
 	async parseResponse(data) {
 		if (data) {
-			const serviceDetail = data['service-detail'];
+			const serviceDetail = data['data']['service-data']['service-detail'];
 			for (const key in serviceDetail) {
 				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
 				await this.setObjectNotExistsAsync(`service.${key}`, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
@@ -146,7 +146,7 @@ class Jablotron extends utils.Adapter {
 	}
 
 	async createObjectStructure() {
-		await this.setObjectNotExistsAsync('status.alarm', { type: 'state', common: { name: 'Alarm status', type: 'number', role: 'level', read: true, write: true, states: '0:disarm;1:home;2:arm;3:alarm', min: 0, max: 3 }, native: {},});
+		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false}, native: {},});
 	}
 
 }
