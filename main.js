@@ -42,6 +42,10 @@ class Jablotron extends utils.Adapter {
 			try {
 				this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 				this.connected = this.sessionId !== '';
+				if (this.connected) {
+					this.setStateAsync('info.connection', { val: true, ack: true });
+					this.setForeignState('system.adapter.' + this.namespace + '.alive', true);
+				}
 			} catch (error) {
 				this.log.error(error);
 			}
@@ -91,6 +95,9 @@ class Jablotron extends utils.Adapter {
 			}
 		} catch (error) {
 			this.log.error(error);
+			this.connected = false;
+			this.setStateAsync('info.connection', { val: false, ack: true });
+			this.setForeignState('system.adapter.' + this.namespace + '.alive', false);
 			return '';
 		}
 	}

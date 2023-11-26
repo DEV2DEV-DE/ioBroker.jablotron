@@ -11,6 +11,11 @@
 			"type": "password",
 			"label": "password",
 			"newLine": false
+		},
+		"pollInterval": {
+			"type": "number",
+			"label": "Poll Interval (seconds)",
+			"newLine": true
 		}
 	}
 }

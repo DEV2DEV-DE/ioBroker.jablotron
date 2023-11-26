@@ -80,7 +80,7 @@
 	"native": {
 		"username": "",
 		"password": "",
-		"pollInterval": 60
+		"pollInterval": 10
 	},
 	"objects": [],
 	"instanceObjects": []
