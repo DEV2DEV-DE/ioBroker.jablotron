@@ -151,7 +151,7 @@ class Jablotron extends utils.Adapter {
 
 	async createObjectStructure() {
 		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false}, native: {},});
-		this.log.debug('Created object structure');
+		this.log.debug('Created static object structure');
 	}
 
 }
