@@ -100,11 +100,8 @@ For later updates, the above procedure is not necessary. Just do the following:
 
 ## Changelog
 
-### 0.0.3-alpha.1 (2023-11-27)
+### **WORK IN PROGRESS**
 Enabled automatic releases on NMP
-
-### 0.0.2-alpha.0 (2023-11-26)
-Initial release
 
 ## License
 MIT License
