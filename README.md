@@ -99,7 +99,7 @@ For later updates, the above procedure is not necessary. Just do the following:
 1. Execute `iobroker upload jablotron` on the ioBroker host
 
 ## Changelog
-### 0.0.2-alpha.1 (2023-11-27)
+### **WORK IN PROGRESS**
 Enabled automatic releases on NMP
 
 ## License
