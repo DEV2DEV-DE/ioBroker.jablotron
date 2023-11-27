@@ -103,9 +103,6 @@ For later updates, the above procedure is not necessary. Just do the following:
 ### **WORK IN PROGRESS**
 Enabled automatic releases on NMP
 
-### 0.0.2-alpha.0
-First attempt for NPM
-
 ## License
 MIT License
 
