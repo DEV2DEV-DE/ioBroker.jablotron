@@ -12,6 +12,8 @@
 
 ## Jablotron adapter for ioBroker
 
+### **WORK IN PROGRESS**
+
 Connects to the Jablotron cloud to access your security system
 
 ## Developer manual
