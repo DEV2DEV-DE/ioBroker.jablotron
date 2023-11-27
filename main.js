@@ -128,7 +128,7 @@ class Jablotron extends utils.Adapter {
 		try {
 			clearInterval(this.refreshInterval);
 			this.setStateAsync('info.connection', { val: true, ack: true });
-		callback();
+			callback();
 		} catch (e) {
 			callback();
 		}
