@@ -70,6 +70,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	async fetchSessionId(username, password) {
 		try {
+			const firstStart = !this.sessionId;
 			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
 				'login': username,
@@ -83,14 +84,15 @@ class Jablotron extends utils.Adapter {
 				'Accept': 'application/json',
 				'Accept-Language': 'en'
 			};
-			if (!this.sessionId) this.log.debug('Fetching new session id');
+			if (firstStart) this.log.debug('Fetching new session id');
 			const response = await axios.post(url, data, { headers });
-			if (!this.sessionId) this.log.info('Logged in to jablonet api');
+			if (firstStart) this.log.info('Logged in to jablonet api');
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
 				this.log.debug('Session-ID: ' + sessionId);
 				await this.parseResponse(response.data['data']['service-data']);
+				// if (firstStart)	await this.getExtendedData(headers, response.data['data']['service-data']['service-id']);
 				return sessionId;
 			} else {
 				this.log.error('No session id found');
@@ -104,6 +106,32 @@ class Jablotron extends utils.Adapter {
 			return '';
 		}
 	}
+
+	async getExtendedData(headers, serviceId) {
+		let payload = {
+			'connect-device': true,
+			'list-type': 'FULL',
+			'service-id': serviceId,
+			'service-states': true
+		};
+		headers['Cookie'] = this.sessionId;
+		let url = `${baseUrl}/JA100/sectionsGet.json`;
+		let response = await axios.post(url, payload, { headers });
+		this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
+		url = `${baseUrl}/JA100/programmableGatesGet.json`;
+		response = await axios.post(url, payload, { headers });
+		this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
+		url = `${baseUrl}/JA100/thermoDevicesGet.json`;
+		response = await axios.post(url, payload, { headers });
+		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
+		payload = {
+			'list-type': 'EXTENDED',
+			'visibility': 'DEFAULT'
+		};
+		url = `${baseUrl}/JA100/serviceListGet.json`;
+		response = await axios.post(url, payload, { headers });
+		this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
+}
 
 	async getCurrentStatus() {
 		this.fetchSessionId(this.config.username, this.config.password);
