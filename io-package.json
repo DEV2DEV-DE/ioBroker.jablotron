@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.2-alpha.0",
+    "version": "0.0.2-alpha.1",
     "news": {
+      "0.0.2-alpha.1": {
+        "en": "Enabled automatic releases on NMP",
+        "de": "Automatische Freigaben auf NMP aktivieren",
+        "ru": "Включены автоматические релизы на NMP",
+        "pt": "Lançamentos automáticos habilitados em NMP",
+        "nl": "Automatische vrijlating op NMP",
+        "fr": "Sorties automatiques activées sur NMP",
+        "it": "Abilitato rilascio automatico su NMP",
+        "es": "Activación automática en NMP",
+        "pl": "Automatyczne wydanie na NMP",
+        "uk": "Увімкнути автоматичні релізи на NMP",
+        "zh-cn": "恩格尔自动排放"
+      },
       "0.0.2-alpha.0": {
         "en": "initial release",
         "de": "erstausstrahlung",
