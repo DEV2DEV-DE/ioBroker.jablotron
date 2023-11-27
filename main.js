@@ -40,6 +40,8 @@ class Jablotron extends utils.Adapter {
 		await this.createObjectStructure();
 
 		try {
+			// the polling interval should never be less than 10 secondes
+			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 			this.connected = this.sessionId !== '';
 			if (this.connected) {
@@ -52,7 +54,7 @@ class Jablotron extends utils.Adapter {
 
 		if (this.connected) {
 			this.refreshInterval = setInterval(() => {
-				this.log.debug('Refreshing data');
+				this.getCurrentStatus();
 			}, this.config.pollInterval * 1000);
 			// subscribe to all state changes
 			// this.subscribeStates('status.alarm');
@@ -68,7 +70,6 @@ class Jablotron extends utils.Adapter {
 	 */
 	async fetchSessionId(username, password) {
 		try {
-			this.log.debug('Fetching session id');
 			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
 				'login': username,
@@ -82,6 +83,7 @@ class Jablotron extends utils.Adapter {
 				'Accept': 'application/json',
 				'Accept-Language': 'en'
 			};
+			if (!this.sessionId) this.log.debug('Fetching new session id');
 			const response = await axios.post(url, data, { headers });
 			if (!this.sessionId) this.log.info('Logged in to jablonet api');
 			const cookie = response.headers['set-cookie'];
@@ -114,8 +116,43 @@ class Jablotron extends utils.Adapter {
 			const serviceDetail = data['service-detail'];
 			for (const key in serviceDetail) {
 				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
-				await this.setObjectNotExistsAsync(`service.${key}`, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
-				await this.setStateAsync(`service.${key}`, `${serviceDetail[key]}`, true);
+				const objectId = `service.${key}`;
+				await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
+				await this.setStateAsync(objectId, `${serviceDetail[key]}`, true);
+			}
+			const serviceStates = data['service-states'];
+			for (const key in serviceStates) {
+				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
+				const objectId = `info.${key}`;
+				await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
+				await this.setStateAsync(objectId, `${serviceDetail[key]}`, true);
+			}
+			const states = data['ja100-service-data']['states'];
+			const sections = data['ja100-service-data']['sections'];
+			if (states && sections) {
+				for (const key in sections) {
+					const channelId = sections[key]['cloud-component-id'];
+					// create a channel for each section
+					await this.setObjectNotExistsAsync(channelId, { type: 'channel', common: { name: 'Section'}, native: {},});
+					for (const element in sections[key]) {
+						const objectId = `${channelId}.${element}`;
+						const objectType = typeof(sections[key][element]);
+						switch (objectType) {
+							case 'boolean': await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'boolean', role: 'state', read: true, write: false}, native: {},});
+								break;
+							case 'number': await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'number', role: 'state', read: true, write: false}, native: {},});
+								break;
+							default: await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'string', role: 'state', read: true, write: false}, native: {},});
+								break;
+						}
+						await this.setStateAsync(objectId, sections[key][element], true);
+					}
+					const state = states.find(state => state['cloud-component-id'] === sections[key]['cloud-component-id']);
+					if (state) { // es wurde ein state zur section gefunden
+						await this.setObjectNotExistsAsync(`${channelId}.state`, { type: 'state', common: { name: 'state', type: 'string', role: 'state', read: true, write: false}, native: {},});
+						await this.setStateAsync(`${channelId}.state`, state.state, true);
+					}
+				}
 			}
 		}
 	}
