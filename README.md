@@ -22,6 +22,7 @@ Enabled automatic releases on NMP
 * https://github.com/ioBroker/AdapterRequests/issues/755
 * https://github.com/hajekmi/myjablotron
 * https://github.com/fdegier/homebridge-jablotron-alarm
+* https://github.com/plaksnor/HASS-JablotronSystem
 
 ## License
 MIT License
