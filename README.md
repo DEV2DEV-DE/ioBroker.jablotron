@@ -15,7 +15,7 @@
 Connects to the Jablotron cloud to access your security system
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.2-beta.1 (2023-11-28)
 * Ready for beta testing
 
 ## References
