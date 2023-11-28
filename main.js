@@ -10,6 +10,14 @@ const utils = require('@iobroker/adapter-core');
 const axios = require('axios').default;
 
 const baseUrl = 'https://api.jablonet.net/api/2.2';
+const headers = {
+	'x-vendor-id': 'JABLOTRON:Jablotron',
+	'Content-Type': 'application/json',
+	'x-client-version': 'MYJ-PUB-ANDROID-12',
+	'accept-encoding': '*',
+	'Accept': 'application/json',
+	'Accept-Language': 'en'
+};
 
 class Jablotron extends utils.Adapter {
 
@@ -76,24 +84,15 @@ class Jablotron extends utils.Adapter {
 				'login': username,
 				'password': password
 			};
-			const headers = {
-				'x-vendor-id': 'JABLOTRON:Jablotron',
-				'Content-Type': 'application/json',
-				'x-client-version': 'MYJ-PUB-ANDROID-12',
-				'accept-encoding': '*',
-				'Accept': 'application/json',
-				'Accept-Language': 'en'
-			};
 			if (firstStart) this.log.debug('Fetching new session id');
 			const response = await axios.post(url, data, { headers });
 			if (firstStart) this.log.info('Logged in to jablonet api');
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
-				const serviceId = response.data['data']['service-data']['service-detail']['service-id'];
 				this.log.debug('Session-ID: ' + sessionId);
 				await this.parseResponse(response.data['data']['service-data']);
-				if (firstStart)	await this.getExtendedData(headers, sessionId, serviceId);
+				if (firstStart)	await this.getExtendedData(headers, sessionId);
 				return sessionId;
 			} else {
 				this.log.error('No session id found');
@@ -108,8 +107,29 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	async getExtendedData(headers, cookie, serviceId) {
-		this.log.debug('Fetching extended data with serviceID: ' + serviceId);
+	async getExtendedData(headers, cookie) {
+		const services = await this.getServices(headers, cookie);
+		for (const key in services) {
+			const serviceId = services[key]['service-id'];
+			await this.getSections(headers, cookie, serviceId);
+			await this.getProgrammableGates(headers, cookie, serviceId);
+			await this.getThermoDevices(headers, cookie, serviceId);
+		}
+	}
+
+	async getServices(headers, cookie) {
+		const payload = {
+			'list-type': 'EXTENDED',
+			'visibility': 'DEFAULT'
+		};
+		headers['Cookie'] = cookie;
+		const url = `${baseUrl}/JA100/serviceListGet.json`;
+		const response = await axios.post(url, payload, { headers });
+		this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
+		return response.data['data'];
+	}
+
+	async getSections(headers, cookie, serviceId) {
 		let payload = {
 			'connect-device': true,
 			'list-type': 'FULL',
@@ -117,23 +137,35 @@ class Jablotron extends utils.Adapter {
 			'service-states': true
 		};
 		headers['Cookie'] = cookie;
-		this.log.debug('Headers: ' + JSON.stringify(headers));
-		let url = `${baseUrl}/JA100/sectionsGet.json`;
-		let response = await axios.post(url, payload, { headers });
+		const url = `${baseUrl}/JA100/sectionsGet.json`;
+		const response = await axios.post(url, payload, { headers });
 		this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
-		url = `${baseUrl}/JA100/programmableGatesGet.json`;
-		response = await axios.post(url, payload, { headers });
-		this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
-		url = `${baseUrl}/JA100/thermoDevicesGet.json`;
-		response = await axios.post(url, payload, { headers });
-		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
-		payload = {
-			'list-type': 'EXTENDED',
-			'visibility': 'DEFAULT'
+	}
+
+	async getProgrammableGates(headers, cookie, serviceId) {
+		let payload = {
+			'connect-device': true,
+			'list-type': 'FULL',
+			'service-id': serviceId,
+			'service-states': true
 		};
-		url = `${baseUrl}/JA100/serviceListGet.json`;
-		response = await axios.post(url, payload, { headers });
-		this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
+		headers['Cookie'] = cookie;
+		const url = `${baseUrl}/JA100/programmableGatesGet.json`;
+		const response = await axios.post(url, payload, { headers });
+		this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
+	}
+
+	async getThermoDevices(headers, cookie, serviceId) {
+		let payload = {
+			'connect-device': true,
+			'list-type': 'FULL',
+			'service-id': serviceId,
+			'service-states': true
+		};
+		headers['Cookie'] = cookie;
+		const url = `${baseUrl}/JA100/thermoDevicesGet.json`;
+		const response = await axios.post(url, payload, { headers });
+		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 	}
 
 	async getCurrentStatus() {
