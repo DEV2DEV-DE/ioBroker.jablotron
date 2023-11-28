@@ -15,8 +15,8 @@
 Connects to the Jablotron cloud to access your security system
 
 ## Changelog
-### 0.0.2-alpha.2 (2023-11-27)
-Enabled automatic releases on NMP
+### **WORK IN PROGRESS**
+* Ready for beta testing
 
 ## References
 * https://github.com/ioBroker/AdapterRequests/issues/755
