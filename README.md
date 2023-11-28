@@ -18,6 +18,11 @@ Connects to the Jablotron cloud to access your security system
 ### 0.0.2-alpha.2 (2023-11-27)
 Enabled automatic releases on NMP
 
+## References
+* https://github.com/ioBroker/AdapterRequests/issues/755
+* https://github.com/hajekmi/myjablotron
+* https://github.com/fdegier/homebridge-jablotron-alarm
+
 ## License
 MIT License
 
