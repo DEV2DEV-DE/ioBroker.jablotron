@@ -90,9 +90,10 @@ class Jablotron extends utils.Adapter {
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
+				const serviceId = response.data['data']['service-data']['service-detail']['service-id']
 				this.log.debug('Session-ID: ' + sessionId);
 				await this.parseResponse(response.data['data']['service-data']);
-				// if (firstStart)	await this.getExtendedData(headers, response.data['data']['service-data']['service-id']);
+				if (firstStart)	await this.getExtendedData(headers, sessionId, serviceId);
 				return sessionId;
 			} else {
 				this.log.error('No session id found');
@@ -107,14 +108,16 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	async getExtendedData(headers, serviceId) {
+	async getExtendedData(headers, cookie, serviceId) {
+		this.log.debug('Fetching extended data with serviceID: ' + serviceId);
 		let payload = {
 			'connect-device': true,
 			'list-type': 'FULL',
 			'service-id': serviceId,
 			'service-states': true
 		};
-		headers['Cookie'] = this.sessionId;
+		headers['Cookie'] = cookie;
+		this.log.debug('Headers: ' + JSON.stringify(headers));
 		let url = `${baseUrl}/JA100/sectionsGet.json`;
 		let response = await axios.post(url, payload, { headers });
 		this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
