@@ -60,14 +60,17 @@ class Jablotron extends utils.Adapter {
 			this.log.error(error);
 		}
 
+		// create interval for recurring tasks
 		if (this.connected) {
 			this.refreshInterval = setInterval(() => {
-				this.getCurrentStatus();
+				if (this.connected && this.sessionId) {
+					this.getExtendedData(headers, this.sessionId);
+					this.log.debug('Polling data from jablonet.net');
+				}
 			}, this.config.pollInterval * 1000);
 			// subscribe to all state changes
 			// this.subscribeStates('status.alarm');
 		}
-
 
 	}
 
@@ -84,15 +87,14 @@ class Jablotron extends utils.Adapter {
 				'login': username,
 				'password': password
 			};
-			if (firstStart) this.log.debug('Fetching new session id');
+			this.log.debug('Fetching new session id');
 			const response = await axios.post(url, data, { headers });
-			if (firstStart) this.log.info('Logged in to jablonet api');
+			this.log.info('Logged in to jablonet api');
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
 				this.log.debug('Session-ID: ' + sessionId);
-				await this.parseResponse(response.data['data']['service-data']);
-				if (firstStart)	await this.getExtendedData(headers, sessionId);
+				await this.getExtendedData(headers, sessionId);
 				return sessionId;
 			} else {
 				this.log.error('No session id found');
@@ -107,16 +109,24 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
+	// get data from jablonet cloud
 	async getExtendedData(headers, cookie) {
 		const services = await this.getServices(headers, cookie);
+		await this.createFolder('services', 'All services related to the account');
 		for (const key in services) {
-			const serviceId = services[key]['service-id'];
+			const service = services[key];
+			const serviceId = service['service-id'];
+			await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
+			for (const state in service) {
+				await this.createState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+			}
 			await this.getSections(headers, cookie, serviceId);
 			await this.getProgrammableGates(headers, cookie, serviceId);
-			await this.getThermoDevices(headers, cookie, serviceId);
+			//await this.getThermoDevices(headers, cookie, serviceId);
 		}
 	}
 
+	// read all services related to the account
 	async getServices(headers, cookie) {
 		const payload = {
 			'list-type': 'EXTENDED',
@@ -125,10 +135,10 @@ class Jablotron extends utils.Adapter {
 		headers['Cookie'] = cookie;
 		const url = `${baseUrl}/JA100/serviceListGet.json`;
 		const response = await axios.post(url, payload, { headers });
-		this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
-		return response.data['data'];
+		return response.data['data']['services'];
 	}
 
+	// read all sections related to a given service
 	async getSections(headers, cookie, serviceId) {
 		let payload = {
 			'connect-device': true,
@@ -139,9 +149,23 @@ class Jablotron extends utils.Adapter {
 		headers['Cookie'] = cookie;
 		const url = `${baseUrl}/JA100/sectionsGet.json`;
 		const response = await axios.post(url, payload, { headers });
-		this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
+		await this.createFolder(`services.${serviceId}.sections`, 'All sections related to the service');
+		const sections = response.data['data']['sections'];
+		const states = response.data['data']['states'];
+		for (const section in sections) {
+			const id = sections[section]['cloud-component-id'];
+			await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
+			for (const key in sections[section]) {
+				await this.createState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
+			}
+			const state = states.find(state => state['cloud-component-id'] === id);
+			if (state) { // es wurde ein state zur section gefunden
+				await this.createState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
+			}
+		}
 	}
 
+	// read all programmable gates related to a given service
 	async getProgrammableGates(headers, cookie, serviceId) {
 		let payload = {
 			'connect-device': true,
@@ -152,9 +176,24 @@ class Jablotron extends utils.Adapter {
 		headers['Cookie'] = cookie;
 		const url = `${baseUrl}/JA100/programmableGatesGet.json`;
 		const response = await axios.post(url, payload, { headers });
-		this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
+		await this.createFolder(`services.${serviceId}.programmable-gates`, 'All programmable gates related to the service');
+		const gates = response.data['data']['programmableGates'];
+		const states = response.data['data']['states'];
+		for (const gate in gates) {
+			const id = gates[gate]['cloud-component-id'];
+			await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
+			for (const key in gates[gate]) {
+				await this.createState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
+				const state = states.find(state => state['cloud-component-id'] === id);
+				if (state) { // es wurde ein state zum gate gefunden
+					await this.createState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
+				}
+			}
+		}
 	}
 
+	// read all thermo devices related to a given service
+	// currently work in prograss due to missing examples
 	async getThermoDevices(headers, cookie, serviceId) {
 		let payload = {
 			'connect-device': true,
@@ -168,56 +207,30 @@ class Jablotron extends utils.Adapter {
 		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 	}
 
-	async getCurrentStatus() {
-		this.fetchSessionId(this.config.username, this.config.password);
+	async createFolder(id, name) {
+		await this.setObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 	}
 
-	async parseResponse(data) {
-		this.log.debug('Parsing response');
-		this.log.debug(JSON.stringify(data));
-		if (data) {
-			const serviceDetail = data['service-detail'];
-			for (const key in serviceDetail) {
-				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
-				const objectId = `service.${key}`;
-				await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
-				await this.setStateAsync(objectId, `${serviceDetail[key]}`, true);
-			}
-			const serviceStates = data['service-states'];
-			for (const key in serviceStates) {
-				console.log(`Key: ${key}, Value: ${serviceDetail[key]}`);
-				const objectId = `info.${key}`;
-				await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: `${key}`, type: 'string', role: 'state', read: true, write: false}, native: {},});
-				await this.setStateAsync(objectId, `${serviceDetail[key]}`, true);
-			}
-			const states = data['ja100-service-data']['states'];
-			const sections = data['ja100-service-data']['sections'];
-			if (states && sections) {
-				for (const key in sections) {
-					const channelId = sections[key]['cloud-component-id'];
-					// create a channel for each section
-					await this.setObjectNotExistsAsync(channelId, { type: 'channel', common: { name: 'Section'}, native: {},});
-					for (const element in sections[key]) {
-						const objectId = `${channelId}.${element}`;
-						const objectType = typeof(sections[key][element]);
-						switch (objectType) {
-							case 'boolean': await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'boolean', role: 'state', read: true, write: false}, native: {},});
-								break;
-							case 'number': await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'number', role: 'state', read: true, write: false}, native: {},});
-								break;
-							default: await this.setObjectNotExistsAsync(objectId, { type: 'state', common: { name: element, type: 'string', role: 'state', read: true, write: false}, native: {},});
-								break;
-						}
-						await this.setStateAsync(objectId, sections[key][element], true);
-					}
-					const state = states.find(state => state['cloud-component-id'] === sections[key]['cloud-component-id']);
-					if (state) { // es wurde ein state zur section gefunden
-						await this.setObjectNotExistsAsync(`${channelId}.state`, { type: 'state', common: { name: 'state', type: 'string', role: 'state', read: true, write: false}, native: {},});
-						await this.setStateAsync(`${channelId}.state`, state.state, true);
-					}
-				}
-			}
+	async createChannel(id, name) {
+		await this.setObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
+	}
+
+	async createState(id, name, read, write, value) {
+		let type = undefined;
+		switch (typeof (value)) {
+			case 'object': type = 'object';
+				value = JSON.stringify(value);
+				break;
+			case 'array': type = 'array';
+				break;
+			case 'string': type = 'string';
+				break;
+			case 'boolean': type = 'boolean';
+				break;
+			default: type = 'number';
 		}
+		await this.setObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
+		await this.setStateAsync(id, value, true);
 	}
 
 	/**
@@ -250,7 +263,7 @@ class Jablotron extends utils.Adapter {
 	}
 
 	async createObjectStructure() {
-		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false}, native: {},});
+		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false }, native: {}, });
 		this.log.debug('Created static object structure');
 	}
 
