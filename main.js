@@ -81,7 +81,6 @@ class Jablotron extends utils.Adapter {
 	 */
 	async fetchSessionId(username, password) {
 		try {
-			const firstStart = !this.sessionId;
 			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
 				'login': username,
@@ -140,7 +139,7 @@ class Jablotron extends utils.Adapter {
 
 	// read all sections related to a given service
 	async getSections(headers, cookie, serviceId) {
-		let payload = {
+		const payload = {
 			'connect-device': true,
 			'list-type': 'FULL',
 			'service-id': serviceId,
@@ -167,7 +166,7 @@ class Jablotron extends utils.Adapter {
 
 	// read all programmable gates related to a given service
 	async getProgrammableGates(headers, cookie, serviceId) {
-		let payload = {
+		const payload = {
 			'connect-device': true,
 			'list-type': 'FULL',
 			'service-id': serviceId,
@@ -195,7 +194,7 @@ class Jablotron extends utils.Adapter {
 	// read all thermo devices related to a given service
 	// currently work in prograss due to missing examples
 	async getThermoDevices(headers, cookie, serviceId) {
-		let payload = {
+		const payload = {
 			'connect-device': true,
 			'list-type': 'FULL',
 			'service-id': serviceId,
