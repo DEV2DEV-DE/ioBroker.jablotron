@@ -90,7 +90,7 @@ class Jablotron extends utils.Adapter {
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
-				const serviceId = response.data['data']['service-data']['service-detail']['service-id']
+				const serviceId = response.data['data']['service-data']['service-detail']['service-id'];
 				this.log.debug('Session-ID: ' + sessionId);
 				await this.parseResponse(response.data['data']['service-data']);
 				if (firstStart)	await this.getExtendedData(headers, sessionId, serviceId);
@@ -134,7 +134,7 @@ class Jablotron extends utils.Adapter {
 		url = `${baseUrl}/JA100/serviceListGet.json`;
 		response = await axios.post(url, payload, { headers });
 		this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
-}
+	}
 
 	async getCurrentStatus() {
 		this.fetchSessionId(this.config.username, this.config.password);
