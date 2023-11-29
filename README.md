@@ -16,6 +16,9 @@ Connects to the Jablotron cloud to access your security system.
 Currently the adapter is **read-only**! It's only possible to read the states. Switching will be implemented later!
 
 ## Changelog
+### **WORK IN PROGRESS**
+* Handle unknown state types
+
 ### 0.0.2-beta.4 (2023-11-29)**
 * Switched recurring refresh from interval to timeout
 * Manage internal list of already created states

@@ -326,7 +326,9 @@ class Jablotron extends utils.Adapter {
 				break;
 			case 'boolean': type = 'boolean';
 				break;
-			default: type = 'number';
+			case 'number': type = 'number';
+				break;
+			default: throw new Error('Unknown type for value "' + name + '"');
 		}
 		if (!this.existsState(id)) {
 			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
