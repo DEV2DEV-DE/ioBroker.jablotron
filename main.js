@@ -290,9 +290,10 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createFolder(id, name) {
-		if (!this.existsState(id)) {
-			await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
-			this.states.push(id);
+		const stateId = this.name2id(id);
+		if (!this.existsState(stateId)) {
+			await this.extendObjectAsync(stateId, { type: 'folder', common: { name: `${name}` }, native: {}, });
+			this.states.push(stateId);
 		}
 	}
 
@@ -302,9 +303,10 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createChannel(id, name) {
-		if (!this.existsState(id)) {
-			await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
-			this.states.push(id);
+		const stateId = this.name2id(id);
+		if (!this.existsState(stateId)) {
+			await this.extendObjectAsync(stateId, { type: 'channel', common: { name: `${name}` }, native: {}, });
+			this.states.push(stateId);
 		}
 	}
 
@@ -334,11 +336,12 @@ class Jablotron extends utils.Adapter {
 				break;
 			default: throw new Error('Unknown type for value "' + name + '"');
 		}
-		if (!this.existsState(id)) {
-			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: role, read: read, write: write }, native: {}, });
-			this.states.push(id);
+		const stateId = this.name2id(id);
+		if (!this.existsState(stateId)) {
+			await this.extendObjectAsync(stateId, { type: 'state', common: { name: `${name}`, type: `${type}`, role: role, read: read, write: write }, native: {}, });
+			this.states.push(stateId);
 		}
-		await this.setStateAsync(id, value, true);
+		await this.setStateAsync(stateId, value, true);
 	}
 
 	/**
@@ -348,6 +351,16 @@ class Jablotron extends utils.Adapter {
 	 */
 	existsState(id) {
 		return this.states.indexOf(id) >= 0;
+	}
+
+	/**
+	 * Replaces forbidden characters in a name with underscores.
+	 * 
+	 * @param {string} name - The name to be processed.
+	 * @returns {string} - The processed name with forbidden characters replaced by underscores.
+	 */
+	name2id (name) {
+		return name.replace(adapter.FORBIDDEN_CHARS, '_');
 	}
 
 	/**
