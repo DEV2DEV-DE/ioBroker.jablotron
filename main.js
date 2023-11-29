@@ -7,6 +7,7 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
+const { Hash } = require('crypto');
 const axios = require('axios').default;
 
 const baseUrl = 'https://api.jablonet.net/api/2.2';
@@ -33,6 +34,7 @@ class Jablotron extends utils.Adapter {
 		this.connected = false;
 		this.sessionId = '';
 		this.refreshInterval = undefined;
+		this.states = [];
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
 		axios.defaults.timeout = 5000; // set timeout for any request to 5 seconds
@@ -235,6 +237,10 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createFolder(id, name) {
+		if (!this.existsState(id)) {
+			await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
+			this.states.push(id);
+		}
 		await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 	}
 
@@ -244,6 +250,10 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createChannel(id, name) {
+		if (!this.existsState(id)) {
+			await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
+			this.states.push(id);
+		}
 		await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
 	}
 
@@ -256,20 +266,32 @@ class Jablotron extends utils.Adapter {
 	 * @param {any} value
 	 */
 	async createState(id, name, read, write, value) {
-		let type = undefined;
-		switch (typeof (value)) {
-			case 'object': type = 'object';
-				value = JSON.stringify(value);
-				break;
-			case 'string': type = 'string';
-				break;
-			case 'boolean': type = 'boolean';
-				break;
-			default: type = 'number';
+		if (!this.existsState(id)) {
+			let type = undefined;
+			switch (typeof (value)) {
+				case 'object': type = 'object';
+					value = JSON.stringify(value);
+					break;
+				case 'string': type = 'string';
+					break;
+				case 'boolean': type = 'boolean';
+					break;
+				default: type = 'number';
+			}
+			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
+			this.states.push(id);
 		}
-		await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
 		await this.setStateAsync(id, value, true);
 	}
+
+	/**
+	 * Checks if a state with the given ID exists.
+	 * @param {string} id - The ID of the state to check.
+	 * @returns {boolean} - True if the state exists, false otherwise.
+	 */
+	existsState(id) {
+		return this.states.indexOf(id) >= 0;
+	}	
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
@@ -302,6 +324,7 @@ class Jablotron extends utils.Adapter {
 
 	async createObjectStructure() {
 		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false }, native: {}, });
+		await this.setObjectNotExistsAsync('blubb', { type: 'folder', common: { name: 'Bli bla blubb' }, native: {}, });
 		this.log.debug('Created static object structure');
 	}
 
