@@ -44,6 +44,15 @@ class Jablotron extends utils.Adapter {
 		this.on('unload', this.onUnload.bind(this));
 	}
 
+	// Getter and setter methods fpr property 'connected'
+	get connected() {
+		return this._connected;
+	}
+	set connected(value) {
+		this._connected = value;
+		this.setStateAsync('info.connection', { val: value, ack: true });
+	}	
+
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
@@ -56,9 +65,6 @@ class Jablotron extends utils.Adapter {
 			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 			this.connected = this.sessionId !== '';
-			if (this.connected) {
-				await this.setStateAsync('info.connection', { val: true, ack: true });
-			}
 		} catch (error) {
 			this.log.error(error);
 		}
@@ -105,7 +111,6 @@ class Jablotron extends utils.Adapter {
 		} catch (error) {
 			this.log.error(error);
 			this.connected = false;
-			this.setStateAsync('info.connection', { val: false, ack: true });
 			return '';
 		}
 	}
@@ -298,7 +303,7 @@ class Jablotron extends utils.Adapter {
 	onUnload(callback) {
 		try {
 			this.clearInterval(this.refreshInterval);
-			this.setStateAsync('info.connection', { val: true, ack: true });
+			this.connected = false;
 			callback();
 		} catch (e) {
 			callback();
