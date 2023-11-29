@@ -30,7 +30,7 @@ class Jablotron extends utils.Adapter {
 			name: 'jablotron',
 		});
 
-		this.connected = false;
+		this.isConnected = false;
 		this.sessionId = '';
 		this.timeout = undefined;
 		this.states = [];
@@ -47,15 +47,15 @@ class Jablotron extends utils.Adapter {
 	 * Getter for the connected property.
 	 * @returns {boolean} The connection status.
 	 */
-	get connected() {
-		return this._connected || false;
+	get isConnected() {
+		return this._isConnected || false;
 	}
 	/**
 	 * Setter for the connected property.
 	 * @param {boolean} value - The new value for the connected property.
 	 */
-	set connected(value) {
-		this._connected = value;
+	set isConnected(value) {
+		this._isConnected = value;
 		this.setState('info.connection', { val: value, ack: true });
 	}
 
@@ -73,10 +73,10 @@ class Jablotron extends utils.Adapter {
 			if (!this.config.username || !this.config.password) throw new Error('Username and password are mandatory');
 
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
-			this.connected = this.sessionId !== '';
+			this.isConnected = this.sessionId !== '';
 
 			// create interval for recurring tasks
-			if (this.connected) {
+			if (this.isConnected) {
 				this.log.debug('Setting up recurring refresh');
 				this.recurringRefresh();
 				// subscribe to all state changes
@@ -86,7 +86,7 @@ class Jablotron extends utils.Adapter {
 			}
 		} catch (error) {
 			this.log.error('Error in onReady: ' + error);
-			this.connected = false;
+			this.isConnected = false;
 		}
 
 	}
@@ -118,7 +118,7 @@ class Jablotron extends utils.Adapter {
 			}
 		} catch (error) {
 			this.log.error(error);
-			this.connected = false;
+			this.isConnected = false;
 			return '';
 		}
 	}
@@ -348,10 +348,10 @@ class Jablotron extends utils.Adapter {
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
 	 * @param {() => void} callback
 	 */
-	onUnload(callback) {
+	async onUnload(callback) {
 		try {
+			await this.setState('info.connection', { val: false, ack: true });
 			if (this.timeout) this.clearTimeout(this.timeout);
-			this.connected = false;
 			callback();
 		} catch (e) {
 			callback();
