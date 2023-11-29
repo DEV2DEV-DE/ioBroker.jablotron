@@ -7,7 +7,6 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
-const { Hash } = require('crypto');
 const axios = require('axios').default;
 
 const baseUrl = 'https://api.jablonet.net/api/2.2';
@@ -44,41 +43,58 @@ class Jablotron extends utils.Adapter {
 		this.on('unload', this.onUnload.bind(this));
 	}
 
-	// Getter and setter methods fpr property 'connected'
+	/**
+	 * Getter for the connected property.
+	 * @returns {boolean} The connection status.
+	 */
 	get connected() {
 		return this._connected;
 	}
+	/**
+	 * Setter for the connected property.
+	 * @param {boolean} value - The new value for the connected property.
+	 */
 	set connected(value) {
 		this._connected = value;
-		this.setStateAsync('info.connection', { val: value, ack: true });
+		this.setState('info.connection', { val: value, ack: true });
 	}	
 
 	/**
 	 * Is called when databases are connected and adapter received configuration.
 	 */
 	async onReady() {
-		// Create all states needed for the adapter
-		await this.createObjectStructure();
-
 		try {
+			// Create all states needed for the adapter
+			await this.createObjectStructure();
+
 			// the polling interval should never be less than 10 seconds to prevent possisble bans
 			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
+			// username and password are mandatory
+			if (!this.config.username || !this.config.password) throw new Error('Username and password are mandatory');
+
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 			this.connected = this.sessionId !== '';
-		} catch (error) {
-			this.log.error(error);
-		}
 
-		// create interval for recurring tasks
-		if (this.connected) {
-			this.refreshInterval = this.setInterval(() => {
-				if (this.sessionId) {
-					this.getExtendedData(headers, this.sessionId);
-					this.log.debug('Polling data from jablonet.net');
-				}
-			}, this.config.pollInterval * 1000);
-			// subscribe to all state changes
-			// this.subscribeStates('status.alarm');
+			// create interval for recurring tasks
+			if (this.connected) {
+				this.log.debug('Setting up polling interval');
+				this.refreshInterval = this.setInterval(() => {
+					try {
+						this.log.debug('Fetch data from jablonet.net');
+						this.getExtendedData(headers, this.sessionId);
+					} catch (error) {
+						this.log.error('Error in polling interval: ' + error);
+						this.connected = false;
+					}
+				}, this.config.pollInterval * 1000);
+				// subscribe to all state changes
+				// this.subscribeStates('status.alarm');
+			} else {
+				throw new Error('Not connect to jablonet.net');
+			}
+		} catch (error) {
+			this.log.error('Error in onReady: ' + error);
+			this.connected = false;
 		}
 
 	}
@@ -102,11 +118,11 @@ class Jablotron extends utils.Adapter {
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
 				this.log.debug('Session-ID: ' + sessionId);
+				this.log.debug('Fetching initial data from jablonet.net');
 				await this.getExtendedData(headers, sessionId);
 				return sessionId;
 			} else {
-				this.log.error('No session id found');
-				return '';
+				throw new Error('No session id received');
 			}
 		} catch (error) {
 			this.log.error(error);
@@ -121,18 +137,23 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} cookie
 	 */
 	async getExtendedData(headers, cookie) {
-		const services = await this.getServices(headers, cookie);
-		await this.createFolder('services', 'All services related to the account');
-		for (const key in services) {
-			const service = services[key];
-			const serviceId = service['service-id'];
-			await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
-			for (const state in service) {
-				await this.createState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+		try {
+			const services = await this.getServices(headers, cookie);
+			await this.createFolder('services', 'All services related to the account');
+			for (const key in services) {
+				const service = services[key];
+				const serviceId = service['service-id'];
+				await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
+				for (const state in service) {
+					await this.createState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+				}
+				await this.getSections(headers, cookie, serviceId);
+				await this.getProgrammableGates(headers, cookie, serviceId);
+				//await this.getThermoDevices(headers, cookie, serviceId);
 			}
-			await this.getSections(headers, cookie, serviceId);
-			await this.getProgrammableGates(headers, cookie, serviceId);
-			//await this.getThermoDevices(headers, cookie, serviceId);
+		} catch (error) {
+			this.log.error('getExtendedData: ' + error);
+			throw error;
 		}
 	}
 
@@ -142,14 +163,20 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} cookie
 	 */
 	async getServices(headers, cookie) {
-		const payload = {
-			'list-type': 'EXTENDED',
-			'visibility': 'DEFAULT'
-		};
-		headers['Cookie'] = cookie;
-		const url = `${baseUrl}/JA100/serviceListGet.json`;
-		const response = await axios.post(url, payload, { headers });
-		return response.data['data']['services'];
+		try {
+			const payload = {
+				'list-type': 'EXTENDED',
+				'visibility': 'DEFAULT'
+			};
+			headers['Cookie'] = cookie;
+			const url = `${baseUrl}/JA100/serviceListGet.json`;
+			const response = await axios.post(url, payload, { headers });
+			this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
+			return response.data['data']['services'];
+		} catch (error) {
+			this.log.error('getServices: ' + error);
+			throw error;
+		}
 	}
 
 	/**
@@ -159,28 +186,34 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} serviceId
 	 */
 	async getSections(headers, cookie, serviceId) {
-		const payload = {
-			'connect-device': true,
-			'list-type': 'FULL',
-			'service-id': serviceId,
-			'service-states': true
-		};
-		headers['Cookie'] = cookie;
-		const url = `${baseUrl}/JA100/sectionsGet.json`;
-		const response = await axios.post(url, payload, { headers });
-		await this.createFolder(`services.${serviceId}.sections`, 'All sections related to the service');
-		const sections = response.data['data']['sections'];
-		const states = response.data['data']['states'];
-		for (const section in sections) {
-			const id = sections[section]['cloud-component-id'];
-			await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
-			for (const key in sections[section]) {
-				await this.createState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
+		try {
+			const payload = {
+				'connect-device': true,
+				'list-type': 'FULL',
+				'service-id': serviceId,
+				'service-states': true
+			};
+			headers['Cookie'] = cookie;
+			const url = `${baseUrl}/JA100/sectionsGet.json`;
+			const response = await axios.post(url, payload, { headers });
+			this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
+			await this.createFolder(`services.${serviceId}.sections`, 'All sections related to the service');
+			const sections = response.data['data']['sections'];
+			const states = response.data['data']['states'];
+			for (const section in sections) {
+				const id = sections[section]['cloud-component-id'];
+				await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
+				for (const key in sections[section]) {
+					await this.createState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
+				}
+				const state = states.find(state => state['cloud-component-id'] === id);
+				if (state) { // es wurde ein state zur section gefunden
+					await this.createState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
+				}
 			}
-			const state = states.find(state => state['cloud-component-id'] === id);
-			if (state) { // es wurde ein state zur section gefunden
-				await this.createState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
-			}
+		} catch (error) {
+			this.log.error('getSections: ' + error);			
+			throw error;
 		}
 	}
 
@@ -191,28 +224,34 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} serviceId
 	 */
 	async getProgrammableGates(headers, cookie, serviceId) {
-		const payload = {
-			'connect-device': true,
-			'list-type': 'FULL',
-			'service-id': serviceId,
-			'service-states': true
-		};
-		headers['Cookie'] = cookie;
-		const url = `${baseUrl}/JA100/programmableGatesGet.json`;
-		const response = await axios.post(url, payload, { headers });
-		await this.createFolder(`services.${serviceId}.programmable-gates`, 'All programmable gates related to the service');
-		const gates = response.data['data']['programmableGates'];
-		const states = response.data['data']['states'];
-		for (const gate in gates) {
-			const id = gates[gate]['cloud-component-id'];
-			await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
-			for (const key in gates[gate]) {
-				await this.createState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
-				const state = states.find(state => state['cloud-component-id'] === id);
-				if (state) { // es wurde ein state zum gate gefunden
-					await this.createState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
+		try {
+			const payload = {
+				'connect-device': true,
+				'list-type': 'FULL',
+				'service-id': serviceId,
+				'service-states': true
+			};
+			headers['Cookie'] = cookie;
+			const url = `${baseUrl}/JA100/programmableGatesGet.json`;
+			const response = await axios.post(url, payload, { headers });
+			this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
+			await this.createFolder(`services.${serviceId}.programmable-gates`, 'All programmable gates related to the service');
+			const gates = response.data['data']['programmableGates'];
+			const states = response.data['data']['states'];
+			for (const gate in gates) {
+				const id = gates[gate]['cloud-component-id'];
+				await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
+				for (const key in gates[gate]) {
+					await this.createState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
+					const state = states.find(state => state['cloud-component-id'] === id);
+					if (state) { // es wurde ein state zum gate gefunden
+						await this.createState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
+					}
 				}
 			}
+		} catch (error) {
+			this.log.error('getProgrammableGates: ' + error);	
+			throw error;
 		}
 	}
 
@@ -224,16 +263,21 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} serviceId
 	 */
 	async getThermoDevices(headers, cookie, serviceId) {
-		const payload = {
-			'connect-device': true,
-			'list-type': 'FULL',
-			'service-id': serviceId,
-			'service-states': true
-		};
-		headers['Cookie'] = cookie;
-		const url = `${baseUrl}/JA100/thermoDevicesGet.json`;
-		const response = await axios.post(url, payload, { headers });
-		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
+		try {
+			const payload = {
+				'connect-device': true,
+				'list-type': 'FULL',
+				'service-id': serviceId,
+				'service-states': true
+			};
+			headers['Cookie'] = cookie;
+			const url = `${baseUrl}/JA100/thermoDevicesGet.json`;
+			const response = await axios.post(url, payload, { headers });
+			this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
+		} catch (error) {
+			this.log.error('getThermoDevices: ' + error);	
+			throw error;
+		}
 	}
 
 	/**
@@ -269,18 +313,18 @@ class Jablotron extends utils.Adapter {
 	 * @param {any} value
 	 */
 	async createState(id, name, read, write, value) {
+		let type = undefined;
+		switch (typeof (value)) {
+			case 'object': type = 'object';
+				value = JSON.stringify(value);
+				break;
+			case 'string': type = 'string';
+				break;
+			case 'boolean': type = 'boolean';
+				break;
+			default: type = 'number';
+		}
 		if (!this.existsState(id)) {
-			let type = undefined;
-			switch (typeof (value)) {
-				case 'object': type = 'object';
-					value = JSON.stringify(value);
-					break;
-				case 'string': type = 'string';
-					break;
-				case 'boolean': type = 'boolean';
-					break;
-				default: type = 'number';
-			}
 			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
 			this.states.push(id);
 		}
