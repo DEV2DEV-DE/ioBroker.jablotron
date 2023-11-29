@@ -32,7 +32,7 @@ class Jablotron extends utils.Adapter {
 
 		this.connected = false;
 		this.sessionId = '';
-		this.refreshInterval = undefined;
+		this.timeout = null
 		this.states = [];
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
@@ -77,16 +77,8 @@ class Jablotron extends utils.Adapter {
 
 			// create interval for recurring tasks
 			if (this.connected) {
-				this.log.debug('Setting up polling interval');
-				this.refreshInterval = this.setInterval(() => {
-					try {
-						this.log.debug('Fetch data from jablonet.net');
-						this.getExtendedData(headers, this.sessionId);
-					} catch (error) {
-						this.log.error('Error in polling interval: ' + error);
-						this.connected = false;
-					}
-				}, this.config.pollInterval * 1000);
+				this.log.debug('Setting up recurring refresh');
+				this.recurringRefresh();
 				// subscribe to all state changes
 				// this.subscribeStates('status.alarm');
 			} else {
@@ -155,6 +147,18 @@ class Jablotron extends utils.Adapter {
 			this.log.error('getExtendedData: ' + error);
 			throw error;
 		}
+	}
+
+	/**
+	 * Recursively refreshes data at a specified interval.
+	 * @returns {void}
+	 */
+	async recurringRefresh() {
+		this.timeout = setTimeout(() => {
+			this.log.debug('Fetch data from jablonet.net');
+			this.getExtendedData(headers, this.sessionId);
+			this.recurringRefresh();
+		}, this.config.pollInterval * 1000);
 	}
 
 	/**
@@ -346,7 +350,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			this.clearInterval(this.refreshInterval);
+			this.clearTimeout(this.timeout);
 			this.connected = false;
 			callback();
 		} catch (e) {
