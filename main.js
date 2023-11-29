@@ -357,7 +357,7 @@ class Jablotron extends utils.Adapter {
 	async onUnload(callback) {
 		try {
 			await this.setState('info.connection', { val: false, ack: true });
-			if (this.timeout) this.clearTimeout(this.timeout);
+			if (this.timeout) await this.clearTimeout(this.timeout);
 			callback();
 		} catch (e) {
 			callback();
