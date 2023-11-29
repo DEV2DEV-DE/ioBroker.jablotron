@@ -355,7 +355,6 @@ class Jablotron extends utils.Adapter {
 
 	/**
 	 * Replaces forbidden characters in a name with underscores.
-	 * 
 	 * @param {string} name - The name to be processed.
 	 * @returns {string} - The processed name with forbidden characters replaced by underscores.
 	 */
