@@ -33,7 +33,9 @@ class Jablotron extends utils.Adapter {
 		this.connected = false;
 		this.sessionId = '';
 		this.refreshInterval = undefined;
+
 		axios.defaults.withCredentials = true; // force axios to use cookies
+		axios.defaults.timeout = 5000; // set timeout for any request to 5 seconds
 
 		this.on('ready', this.onReady.bind(this));
 		this.on('stateChange', this.onStateChange.bind(this));
@@ -48,13 +50,12 @@ class Jablotron extends utils.Adapter {
 		await this.createObjectStructure();
 
 		try {
-			// the polling interval should never be less than 10 secondes
+			// the polling interval should never be less than 10 seconds to prevent possisble bans
 			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 			this.connected = this.sessionId !== '';
 			if (this.connected) {
-				this.setStateAsync('info.connection', { val: true, ack: true });
-				this.setForeignState('system.adapter.' + this.namespace + '.alive', true);
+				await this.setStateAsync('info.connection', { val: true, ack: true });
 			}
 		} catch (error) {
 			this.log.error(error);
@@ -62,7 +63,7 @@ class Jablotron extends utils.Adapter {
 
 		// create interval for recurring tasks
 		if (this.connected) {
-			this.refreshInterval = setInterval(() => {
+			this.refreshInterval = this.setInterval(() => {
 				if (this.sessionId) {
 					this.getExtendedData(headers, this.sessionId);
 					this.log.debug('Polling data from jablonet.net');
@@ -103,7 +104,6 @@ class Jablotron extends utils.Adapter {
 			this.log.error(error);
 			this.connected = false;
 			this.setStateAsync('info.connection', { val: false, ack: true });
-			this.setForeignState('system.adapter.' + this.namespace + '.alive', false);
 			return '';
 		}
 	}
@@ -235,7 +235,7 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createFolder(id, name) {
-		await this.setObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
+		await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 	}
 
 	/**
@@ -244,7 +244,7 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} name
 	 */
 	async createChannel(id, name) {
-		await this.setObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
+		await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
 	}
 
 	/**
@@ -261,15 +261,13 @@ class Jablotron extends utils.Adapter {
 			case 'object': type = 'object';
 				value = JSON.stringify(value);
 				break;
-			case 'array': type = 'array';
-				break;
 			case 'string': type = 'string';
 				break;
 			case 'boolean': type = 'boolean';
 				break;
 			default: type = 'number';
 		}
-		await this.setObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
+		await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
 		await this.setStateAsync(id, value, true);
 	}
 
@@ -279,7 +277,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			clearInterval(this.refreshInterval);
+			this.clearInterval(this.refreshInterval);
 			this.setStateAsync('info.connection', { val: true, ack: true });
 			callback();
 		} catch (e) {
