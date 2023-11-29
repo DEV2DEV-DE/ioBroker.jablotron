@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.2-beta.4",
+    "version": "0.0.2-beta.5",
     "news": {
+      "0.0.2-beta.5": {
+        "en": "Handle unknown state types",
+        "de": "Handle unbekannte Zustandstypen",
+        "ru": "Обработка неизвестных государственных типов",
+        "pt": "Lidar com tipos de estado desconhecidos",
+        "nl": "Handel onbekende staatstypes",
+        "fr": "Types d'état inconnus",
+        "it": "Maniglia tipi di stato sconosciuti",
+        "es": "Tipos de estado desconocidos",
+        "pl": "Nieznane dane stanowe",
+        "uk": "Ручка невідомого типу держави",
+        "zh-cn": "中型不明国家类型"
+      },
       "0.0.2-beta.4": {
         "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
         "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
@@ -69,19 +82,6 @@
         "zh-cn": "接受试验的阅读"
       },
       "0.0.2-alpha.2": {
-        "en": "Enabled automatic releases on NMP",
-        "de": "Automatische Freigaben auf NMP aktivieren",
-        "ru": "Включены автоматические релизы на NMP",
-        "pt": "Lançamentos automáticos habilitados em NMP",
-        "nl": "Automatische vrijlating op NMP",
-        "fr": "Sorties automatiques activées sur NMP",
-        "it": "Abilitato rilascio automatico su NMP",
-        "es": "Activación automática en NMP",
-        "pl": "Automatyczne wydanie na NMP",
-        "uk": "Увімкнути автоматичні релізи на NMP",
-        "zh-cn": "恩格尔自动排放"
-      },
-      "0.0.2-alpha.1": {
         "en": "Enabled automatic releases on NMP",
         "de": "Automatische Freigaben auf NMP aktivieren",
         "ru": "Включены автоматические релизы на NMP",

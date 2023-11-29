@@ -19,7 +19,7 @@ Currently the adapter is **read-only**!
 It's only possible to read the states. Switching will be implemented later!
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.2-beta.5 (2023-11-29)
 * Handle unknown state types
 
 ### 0.0.2-beta.4 (2023-11-29)**
