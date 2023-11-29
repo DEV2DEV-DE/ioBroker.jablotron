@@ -32,7 +32,7 @@ class Jablotron extends utils.Adapter {
 
 		this.connected = false;
 		this.sessionId = '';
-		this.timeout = null
+		this.timeout = null;
 		this.states = [];
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
