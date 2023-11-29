@@ -32,7 +32,7 @@ class Jablotron extends utils.Adapter {
 
 		this.connected = false;
 		this.sessionId = '';
-		this.timeout = null;
+		this.timeout = undefined;
 		this.states = [];
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
@@ -48,7 +48,7 @@ class Jablotron extends utils.Adapter {
 	 * @returns {boolean} The connection status.
 	 */
 	get connected() {
-		return this._connected;
+		return this._connected || false;
 	}
 	/**
 	 * Setter for the connected property.
@@ -151,7 +151,7 @@ class Jablotron extends utils.Adapter {
 
 	/**
 	 * Recursively refreshes data at a specified interval.
-	 * @returns {void}
+	 * @returns {Promise<void>}
 	 */
 	async recurringRefresh() {
 		this.timeout = setTimeout(() => {
@@ -350,7 +350,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	onUnload(callback) {
 		try {
-			this.clearTimeout(this.timeout);
+			if (this.timeout) this.clearTimeout(this.timeout);
 			this.connected = false;
 			callback();
 		} catch (e) {
