@@ -28,7 +28,7 @@ Currently the adapter is **read-only**! It's only possible to read the states. S
 ## License
 MIT License
 
-Copyright (c) 2023 DEV2DEV-DE <github@dev2dev.de>
+Copyright (c) 2023 DEV2DEV-DE
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
