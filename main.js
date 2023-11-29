@@ -318,20 +318,24 @@ class Jablotron extends utils.Adapter {
 	 */
 	async createState(id, name, read, write, value) {
 		let type = undefined;
+		let role = 'state';
 		switch (typeof (value)) {
 			case 'object': type = 'object';
 				value = JSON.stringify(value);
 				break;
 			case 'string': type = 'string';
+				role = 'text';
 				break;
 			case 'boolean': type = 'boolean';
+				role = 'indicator';
 				break;
 			case 'number': type = 'number';
+				role = 'value';
 				break;
 			default: throw new Error('Unknown type for value "' + name + '"');
 		}
 		if (!this.existsState(id)) {
-			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: 'state', read: read, write: write }, native: {}, });
+			await this.extendObjectAsync(id, { type: 'state', common: { name: `${name}`, type: `${type}`, role: role, read: read, write: write }, native: {}, });
 			this.states.push(id);
 		}
 		await this.setStateAsync(id, value, true);
