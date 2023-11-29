@@ -63,7 +63,7 @@ class Jablotron extends utils.Adapter {
 		// create interval for recurring tasks
 		if (this.connected) {
 			this.refreshInterval = setInterval(() => {
-				if (this.connected && this.sessionId) {
+				if (this.sessionId) {
 					this.getExtendedData(headers, this.sessionId);
 					this.log.debug('Polling data from jablonet.net');
 				}
@@ -108,7 +108,11 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	// get data from jablonet cloud
+	/**
+	 * get data from jablonet cloud
+	 * @param {object} headers
+	 * @param {string} cookie
+	 */
 	async getExtendedData(headers, cookie) {
 		const services = await this.getServices(headers, cookie);
 		await this.createFolder('services', 'All services related to the account');
@@ -125,7 +129,11 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	// read all services related to the account
+	/**
+	 * read all services related to the account
+	 * @param {object} headers
+	 * @param {string} cookie
+	 */
 	async getServices(headers, cookie) {
 		const payload = {
 			'list-type': 'EXTENDED',
@@ -137,7 +145,12 @@ class Jablotron extends utils.Adapter {
 		return response.data['data']['services'];
 	}
 
-	// read all sections related to a given service
+	/**
+	 * read all sections related to a given service
+	 * @param {object} headers
+	 * @param {string} cookie
+	 * @param {string} serviceId
+	 */
 	async getSections(headers, cookie, serviceId) {
 		const payload = {
 			'connect-device': true,
@@ -164,7 +177,12 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	// read all programmable gates related to a given service
+	/**
+	 * read all programmable gates related to a given service
+	 * @param {object} headers
+	 * @param {string} cookie
+	 * @param {string} serviceId
+	 */
 	async getProgrammableGates(headers, cookie, serviceId) {
 		const payload = {
 			'connect-device': true,
@@ -191,8 +209,13 @@ class Jablotron extends utils.Adapter {
 		}
 	}
 
-	// read all thermo devices related to a given service
-	// currently work in prograss due to missing examples
+	/**
+	 * read all thermo devices related to a given service
+	 * currently work in prograss due to missing examples
+	 * @param {object} headers
+	 * @param {string} cookie
+	 * @param {string} serviceId
+	 */
 	async getThermoDevices(headers, cookie, serviceId) {
 		const payload = {
 			'connect-device': true,
@@ -206,14 +229,32 @@ class Jablotron extends utils.Adapter {
 		this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 	}
 
+	/**
+	 * create a folder in the object tree
+	 * @param {string} id
+	 * @param {string} name
+	 */
 	async createFolder(id, name) {
 		await this.setObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 	}
 
+	/**
+	 * create a channel in the object tree
+	 * @param {string} id
+	 * @param {string} name
+	 */
 	async createChannel(id, name) {
 		await this.setObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
 	}
 
+	/**
+	 * create a state in the object tree and set its value
+	 * @param {string} id
+	 * @param {string} name
+	 * @param {boolean} read
+	 * @param {boolean} write
+	 * @param {any} value
+	 */
 	async createState(id, name, read, write, value) {
 		let type = undefined;
 		switch (typeof (value)) {
