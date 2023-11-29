@@ -57,7 +57,7 @@ class Jablotron extends utils.Adapter {
 	set connected(value) {
 		this._connected = value;
 		this.setState('info.connection', { val: value, ack: true });
-	}	
+	}
 
 	/**
 	 * Is called when databases are connected and adapter received configuration.
@@ -216,7 +216,7 @@ class Jablotron extends utils.Adapter {
 				}
 			}
 		} catch (error) {
-			this.log.error('getSections: ' + error);			
+			this.log.error('getSections: ' + error);
 			throw error;
 		}
 	}
@@ -254,7 +254,7 @@ class Jablotron extends utils.Adapter {
 				}
 			}
 		} catch (error) {
-			this.log.error('getProgrammableGates: ' + error);	
+			this.log.error('getProgrammableGates: ' + error);
 			throw error;
 		}
 	}
@@ -279,7 +279,7 @@ class Jablotron extends utils.Adapter {
 			const response = await axios.post(url, payload, { headers });
 			this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 		} catch (error) {
-			this.log.error('getThermoDevices: ' + error);	
+			this.log.error('getThermoDevices: ' + error);
 			throw error;
 		}
 	}
@@ -342,7 +342,7 @@ class Jablotron extends utils.Adapter {
 	 */
 	existsState(id) {
 		return this.states.indexOf(id) >= 0;
-	}	
+	}
 
 	/**
 	 * Is called when adapter shuts down - callback has to be called under any circumstances!
