@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.2-beta.3",
+    "version": "0.0.2-beta.4",
     "news": {
+      "0.0.2-beta.4": {
+        "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
+        "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
+        "ru": "Переключенный рекурс обновления от интервала до timeout\nУправляйте внутренним списком уже созданных государств",
+        "pt": "Atualização recorrente comutada de intervalo para timeout\nGerenciar a lista interna de estados já criados",
+        "nl": "Verfrissing van interval tot time-out\nBeheer de interne lijst van al gecreëerde staten",
+        "fr": "Rafraîchissement récurrent commuté de l'intervalle au timeout\nGérer la liste interne des Etats déjà créés",
+        "it": "Interruttore di rinfresco ricorrente da intervallo a timeout\nGestire l'elenco interno degli stati già creati",
+        "es": "Refrigerio recurrente conmutado de intervalo a tiempo\nGestionar la lista interna de estados ya creados",
+        "pl": "Odświetlanie odświeżone od przerw do czasu\nLista wewnętrzna państw uformowanych",
+        "uk": "Переключена рецидивна робота з інтервалом часу\nУправління внутрішнім переліком вже створених держав",
+        "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
+      },
       "0.0.2-beta.3": {
         "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
         "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
@@ -80,19 +93,6 @@
         "pl": "Automatyczne wydanie na NMP",
         "uk": "Увімкнути автоматичні релізи на NMP",
         "zh-cn": "恩格尔自动排放"
-      },
-      "0.0.2-alpha.0": {
-        "en": "initial release",
-        "de": "erstausstrahlung",
-        "ru": "начальный выпуск",
-        "pt": "lançamento inicial",
-        "nl": "niet",
-        "fr": "initial release",
-        "it": "rilascio iniziale",
-        "es": "liberación inicial",
-        "pl": "pierwsze wydanie",
-        "uk": "початковий реліз",
-        "zh-cn": "初步释放"
       }
     },
     "titleLang": {
