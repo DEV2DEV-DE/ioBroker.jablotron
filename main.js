@@ -359,7 +359,7 @@ class Jablotron extends utils.Adapter {
 	 * @returns {string} - The processed name with forbidden characters replaced by underscores.
 	 */
 	name2id (name) {
-		return name.replace(adapter.FORBIDDEN_CHARS, '_');
+		return name.replace(this.FORBIDDEN_CHARS, '_');
 	}
 
 	/**
