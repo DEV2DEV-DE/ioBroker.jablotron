@@ -241,7 +241,6 @@ class Jablotron extends utils.Adapter {
 			await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 			this.states.push(id);
 		}
-		await this.extendObjectAsync(id, { type: 'folder', common: { name: `${name}` }, native: {}, });
 	}
 
 	/**
@@ -254,7 +253,6 @@ class Jablotron extends utils.Adapter {
 			await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
 			this.states.push(id);
 		}
-		await this.extendObjectAsync(id, { type: 'channel', common: { name: `${name}` }, native: {}, });
 	}
 
 	/**
