@@ -18,7 +18,24 @@ Currently the adapter is **read-only**!
 
 It's only possible to read the states. Switching will be implemented later!
 
+The adapter only connects to the cloud of the manufacturer. It's currently not possible to connect to the central unit over the local network only, because the manufacturer holds the local API closed.
+
+## Known issues
+* As far as known by now, sensors, switches and other devices have to be configured as a 'programmable gate' to be readable.
+* There are devices to be listed as 'thermoDevice', but the list has been empty by now and therefore could not have been tested yet.
+
+Report any bug, issue or request as a GitHub-Issue: https://github.com/DEV2DEV-DE/ioBroker.jablotron/issues
+
+## Manufacturer
+
+https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
+
+
 ## Changelog
+### **WORK IN PROGRESS**
+* Provide an appropriate role for any state
+* Readme extended
+
 ### 0.0.2-beta.5 (2023-11-29)
 * Handle unknown state types
 
