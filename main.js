@@ -141,7 +141,7 @@ class Jablotron extends utils.Adapter {
 				}
 				await this.getSections(headers, cookie, serviceId);
 				await this.getProgrammableGates(headers, cookie, serviceId);
-				//await this.getThermoDevices(headers, cookie, serviceId);
+				await this.getThermoDevices(headers, cookie, serviceId);
 			}
 		} catch (error) {
 			this.log.error('getExtendedData: ' + error);

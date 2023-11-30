@@ -35,6 +35,7 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 ### **WORK IN PROGRESS**
 * Provide an appropriate role for any state
 * Readme extended
+* Output 'thermoDevices' in debug log
 
 ### 0.0.2-beta.5 (2023-11-29)
 * Handle unknown state types
