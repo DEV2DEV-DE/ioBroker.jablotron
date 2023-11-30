@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.2-beta.5",
+    "version": "0.0.2",
     "news": {
+      "0.0.2": {
+        "en": "Provide an appropriate role for any state\nReadme extended\nOutput 'thermoDevices' in debug log",
+        "de": "Stellen Sie eine angemessene Rolle für jeden Staat\nReader erweitert\nAusgangsthermo Geräte im Debug-Log",
+        "ru": "Обеспечить соответствующую роль для любого государства\nReadme расширен\nВыход термо Устройства в debug log",
+        "pt": "Fornecer um papel adequado para qualquer estado\nReadme estendida\nTermo de saída Dispositivos em log de depuração",
+        "nl": "Een geschikte rol voor elke staat\nReadme verlengd\nVertaling: Vertaling:",
+        "fr": "Fournir un rôle approprié à tout État\nReadme extended\nThermomètre de sortie Appareils dans le journal debug",
+        "it": "Fornire un ruolo appropriato per qualsiasi stato\nReadme estesa\nTermo di uscita Dispositivi nel registro di debug",
+        "es": "Proporcionar un papel adecuado para cualquier Estado\nReadme extended\nTermo de salida Dispositivos en tronco de depuración",
+        "pl": "Umożliwia to odpowiednią rolę dla każdego państwa\nReady extended\nTermos Urządzenia w debug log",
+        "uk": "Забезпечити відповідну роль будь-якого стану\nПродовжити читання\nВипадковий термо Пристрої в журналі Debug",
+        "zh-cn": "向任何国家提供适当作用\n阅读摘要\n产出 D. 被盗入黑色金属"
+      },
       "0.0.2-beta.5": {
         "en": "Handle unknown state types",
         "de": "Handle unbekannte Zustandstypen",
@@ -80,19 +93,6 @@
         "pl": "Ready for beta testing",
         "uk": "Готовий для тестування бета",
         "zh-cn": "接受试验的阅读"
-      },
-      "0.0.2-alpha.2": {
-        "en": "Enabled automatic releases on NMP",
-        "de": "Automatische Freigaben auf NMP aktivieren",
-        "ru": "Включены автоматические релизы на NMP",
-        "pt": "Lançamentos automáticos habilitados em NMP",
-        "nl": "Automatische vrijlating op NMP",
-        "fr": "Sorties automatiques activées sur NMP",
-        "it": "Abilitato rilascio automatico su NMP",
-        "es": "Activación automática en NMP",
-        "pl": "Automatyczne wydanie na NMP",
-        "uk": "Увімкнути автоматичні релізи на NMP",
-        "zh-cn": "恩格尔自动排放"
       }
     },
     "titleLang": {
