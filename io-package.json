@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
+      "0.0.4": {
+        "en": "Fixed wrong state type for data type 'object'",
+        "de": "Fester falscher Zustandstyp für Datentypobjekt",
+        "ru": "Исправлен неправильный государственный тип объекта типа данных",
+        "pt": "Tipo de estado errado fixo para objeto tipo de dados",
+        "nl": "Verkeerde staatstype",
+        "fr": "Type fixe d'état incorrect pour objet de type de données",
+        "it": "Tipo di stato sbagliato fisso per oggetto tipo di dati",
+        "es": "Tipo de estado incorrecto fijo para el tipo de objeto de tipo de datos",
+        "pl": "Fixed bad state type for data type object",
+        "uk": "Виправлено неправильний тип стану об'єкта типу даних",
+        "zh-cn": "数据类型目标的固定错误状况"
+      },
       "0.0.3": {
         "en": "Implemented improvements mentioned in review",
         "de": "Implementierte Verbesserungen in der Überprüfung",
@@ -80,19 +93,6 @@
         "pl": "Odświetlanie odświeżone od przerw do czasu\nLista wewnętrzna państw uformowanych",
         "uk": "Переключена рецидивна робота з інтервалом часу\nУправління внутрішнім переліком вже створених держав",
         "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
-      },
-      "0.0.2-beta.1": {
-        "en": "Ready for beta testing",
-        "de": "Bereit für Beta-Tests",
-        "ru": "Готов к бета-тестированию",
-        "pt": "Pronto para testes beta",
-        "nl": "Klaar voor de beta test",
-        "fr": "Prêt pour les tests de bêta",
-        "it": "Pronti per il test beta",
-        "es": "Listo para pruebas beta",
-        "pl": "Ready for beta testing",
-        "uk": "Готовий для тестування бета",
-        "zh-cn": "接受试验的阅读"
       }
     },
     "titleLang": {

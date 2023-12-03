@@ -32,7 +32,7 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.4 (2023-12-03)
 * Fixed wrong state type for data type 'object'
 
 ### 0.0.3 (2023-12-03)
