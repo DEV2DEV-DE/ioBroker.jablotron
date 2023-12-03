@@ -319,27 +319,28 @@ class Jablotron extends utils.Adapter {
 	 * @param {any} value
 	 */
 	async doCreateState(id, name, read, write, value) {
-		let type = '';
-		let role = '';
+		let stateType = '';
+		let stateRole = '';
 		switch (typeof (value)) {
-			case 'object': type = 'object';
-				role = 'json';
+			case 'object': stateType = 'string';
+				stateRole = 'json';
 				value = JSON.stringify(value);
 				break;
-			case 'string': type = 'string';
-				role = 'text';
+			case 'string': stateType = 'string';
+				stateRole = 'text';
 				break;
-			case 'boolean': type = 'boolean';
-				role = 'indicator';
+			case 'boolean': stateType = 'boolean';
+				stateRole = 'indicator';
 				break;
-			case 'number': type = 'number';
-				role = 'value';
+			case 'number': stateType = 'number';
+				stateRole = 'value';
 				break;
 			default: throw new Error('Unknown type for value "' + name + '"');
 		}
 		const stateId = this.name2id(id);
 		if (!this.existsState(stateId)) {
-			await this.extendObjectAsync(stateId, { type: 'state', common: { name: `${name}`, type: `${type}`, role: role, read: read, write: write }, native: {}, });
+			// @ts-expect-error: False posotive. Invalid types will result in an error. There will never be an invalid type here.
+			await this.extendObjectAsync(stateId, { type: 'state', common: { name: `${name}`, type: `${stateType}`, role: stateRole, read: read, write: write }, native: {}, });
 			this.states.push(stateId);
 		}
 		await this.setStateAsync(stateId, value, true);
