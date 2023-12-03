@@ -32,6 +32,9 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 
 
 ## Changelog
+### **WORK IN PROGRESS**
+* Implemented improvements mentioned in review
+
 ### 0.0.2 (2023-11-30)
 * Provide an appropriate role for any state
 * Readme extended
