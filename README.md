@@ -32,7 +32,7 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.3 (2023-12-03)
 * Implemented improvements mentioned in review
 
 ### 0.0.2 (2023-11-30)

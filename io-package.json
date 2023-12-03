@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "Implemented improvements mentioned in review",
+        "de": "Implementierte Verbesserungen in der Überprüfung",
+        "ru": "Внедренные улучшения, упомянутые в обзоре",
+        "pt": "Melhorias implementadas mencionadas na revisão",
+        "nl": "Verbeteringen vermeld in beoordeling",
+        "fr": "Améliorations mises en œuvre mentionnées dans l ' examen",
+        "it": "Miglioramenti attuati menzionati nella recensione",
+        "es": "Mejoras aplicadas mencionadas en el examen",
+        "pl": "Implementacja poprawek wspomnianych w przeglądzie",
+        "uk": "Реалізовані поліпшення, зазначені в огляді",
+        "zh-cn": "实施审查中提到的改进"
+      },
       "0.0.2": {
         "en": "Provide an appropriate role for any state\nReadme extended\nOutput 'thermoDevices' in debug log",
         "de": "Stellen Sie eine angemessene Rolle für jeden Staat\nReader erweitert\nAusgangsthermo Geräte im Debug-Log",
@@ -69,19 +82,6 @@
         "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
       },
       "0.0.2-beta.1": {
-        "en": "Ready for beta testing",
-        "de": "Bereit für Beta-Tests",
-        "ru": "Готов к бета-тестированию",
-        "pt": "Pronto para testes beta",
-        "nl": "Klaar voor de beta test",
-        "fr": "Prêt pour les tests de bêta",
-        "it": "Pronti per il test beta",
-        "es": "Listo para pruebas beta",
-        "pl": "Ready for beta testing",
-        "uk": "Готовий для тестування бета",
-        "zh-cn": "接受试验的阅读"
-      },
-      "0.0.2-beta.0": {
         "en": "Ready for beta testing",
         "de": "Bereit für Beta-Tests",
         "ru": "Готов к бета-тестированию",
