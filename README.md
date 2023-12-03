@@ -32,6 +32,9 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 
 
 ## Changelog
+### **WORK IN PROGRESS**
+* Fixed typo
+
 ### 0.0.4 (2023-12-03)
 * Fixed wrong state type for data type 'object'
 
@@ -42,13 +45,6 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 * Provide an appropriate role for any state
 * Readme extended
 * Output 'thermoDevices' in debug log
-
-### 0.0.2-beta.5 (2023-11-29)
-* Handle unknown state types
-
-### 0.0.2-beta.4 (2023-11-29)**
-* Switched recurring refresh from interval to timeout
-* Manage internal list of already created states
 
 ## References
 * https://github.com/ioBroker/AdapterRequests/issues/755

@@ -339,7 +339,7 @@ class Jablotron extends utils.Adapter {
 		}
 		const stateId = this.name2id(id);
 		if (!this.existsState(stateId)) {
-			// @ts-expect-error: False posotive. Invalid types will result in an error. There will never be an invalid type here.
+			// @ts-expect-error: False positive. Invalid types will result in an error. There will never be an invalid type here.
 			await this.extendObjectAsync(stateId, { type: 'state', common: { name: `${name}`, type: `${stateType}`, role: stateRole, read: read, write: write }, native: {}, });
 			this.states.push(stateId);
 		}
