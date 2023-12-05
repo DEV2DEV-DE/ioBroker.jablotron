@@ -20,6 +20,10 @@ It's only possible to read the states. Switching will be implemented later!
 
 The adapter only connects to the cloud of the manufacturer. It's currently not possible to connect to the central unit over the local network only, because the manufacturer holds the local API closed.
 
+### Forum
+
+Discuss your test experience here: https://forum.iobroker.net/topic/70798/test-adapter-jablotron-v-0-0-x
+
 ## Known issues
 * As far as known by now, sensors, switches and other devices have to be configured as a 'programmable gate' to be readable.
 * There are devices to be listed as 'thermoDevice', but the list has been empty by now and therefore could not have been tested yet.
