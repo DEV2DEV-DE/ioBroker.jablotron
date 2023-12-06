@@ -55,6 +55,7 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 * https://github.com/hajekmi/myjablotron
 * https://github.com/fdegier/homebridge-jablotron-alarm
 * https://github.com/plaksnor/HASS-JablotronSystem
+* https://github.com/kukulich/home-assistant-jablotron100
 
 ## License
 MIT License
