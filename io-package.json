@@ -41,58 +41,6 @@
         "pl": "Umożliwia to odpowiednią rolę dla każdego państwa\nReady extended\nTermos Urządzenia w debug log",
         "uk": "Забезпечити відповідну роль будь-якого стану\nПродовжити читання\nВипадковий термо Пристрої в журналі Debug",
         "zh-cn": "向任何国家提供适当作用\n阅读摘要\n产出 D. 被盗入黑色金属"
-      },
-      "0.0.2-beta.5": {
-        "en": "Handle unknown state types",
-        "de": "Handle unbekannte Zustandstypen",
-        "ru": "Обработка неизвестных государственных типов",
-        "pt": "Lidar com tipos de estado desconhecidos",
-        "nl": "Handel onbekende staatstypes",
-        "fr": "Types d'état inconnus",
-        "it": "Maniglia tipi di stato sconosciuti",
-        "es": "Tipos de estado desconocidos",
-        "pl": "Nieznane dane stanowe",
-        "uk": "Ручка невідомого типу держави",
-        "zh-cn": "中型不明国家类型"
-      },
-      "0.0.2-beta.4": {
-        "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
-        "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
-        "ru": "Переключенный рекурс обновления от интервала до timeout\nУправляйте внутренним списком уже созданных государств",
-        "pt": "Atualização recorrente comutada de intervalo para timeout\nGerenciar a lista interna de estados já criados",
-        "nl": "Verfrissing van interval tot time-out\nBeheer de interne lijst van al gecreëerde staten",
-        "fr": "Rafraîchissement récurrent commuté de l'intervalle au timeout\nGérer la liste interne des Etats déjà créés",
-        "it": "Interruttore di rinfresco ricorrente da intervallo a timeout\nGestire l'elenco interno degli stati già creati",
-        "es": "Refrigerio recurrente conmutado de intervalo a tiempo\nGestionar la lista interna de estados ya creados",
-        "pl": "Odświetlanie odświeżone od przerw do czasu\nLista wewnętrzna państw uformowanych",
-        "uk": "Переключена рецидивна робота з інтервалом часу\nУправління внутрішнім переліком вже створених держав",
-        "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
-      },
-      "0.0.2-beta.3": {
-        "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
-        "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
-        "ru": "Переключенный рекурс обновления от интервала до timeout\nУправляйте внутренним списком уже созданных государств",
-        "pt": "Atualização recorrente comutada de intervalo para timeout\nGerenciar a lista interna de estados já criados",
-        "nl": "Verfrissing van interval tot time-out\nBeheer de interne lijst van al gecreëerde staten",
-        "fr": "Rafraîchissement récurrent commuté de l'intervalle au timeout\nGérer la liste interne des Etats déjà créés",
-        "it": "Interruttore di rinfresco ricorrente da intervallo a timeout\nGestire l'elenco interno degli stati già creati",
-        "es": "Refrigerio recurrente conmutado de intervalo a tiempo\nGestionar la lista interna de estados ya creados",
-        "pl": "Odświetlanie odświeżone od przerw do czasu\nLista wewnętrzna państw uformowanych",
-        "uk": "Переключена рецидивна робота з інтервалом часу\nУправління внутрішнім переліком вже створених держав",
-        "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
-      },
-      "0.0.2-beta.2": {
-        "en": "Switched recurring refresh from interval to timeout\nManage internal list of already created states",
-        "de": "Geschaltete wiederkehrende Erfrischung von Intervall zu Timeout\nInterne Liste der bereits erstellten Staaten verwalten",
-        "ru": "Переключенный рекурс обновления от интервала до timeout\nУправляйте внутренним списком уже созданных государств",
-        "pt": "Atualização recorrente comutada de intervalo para timeout\nGerenciar a lista interna de estados já criados",
-        "nl": "Verfrissing van interval tot time-out\nBeheer de interne lijst van al gecreëerde staten",
-        "fr": "Rafraîchissement récurrent commuté de l'intervalle au timeout\nGérer la liste interne des Etats déjà créés",
-        "it": "Interruttore di rinfresco ricorrente da intervallo a timeout\nGestire l'elenco interno degli stati già creati",
-        "es": "Refrigerio recurrente conmutado de intervalo a tiempo\nGestionar la lista interna de estados ya creados",
-        "pl": "Odświetlanie odświeżone od przerw do czasu\nLista wewnętrzna państw uformowanych",
-        "uk": "Переключена рецидивна робота з інтервалом часу\nУправління внутрішнім переліком вже створених держав",
-        "zh-cn": "证人多次从间隔到时间停顿。\n管理已建国的内部名单"
       }
     },
     "titleLang": {
@@ -160,6 +108,22 @@
     "password": "",
     "pollInterval": 10
   },
+  "encryptedNative": ["password"],
+  "protectedNative": ["password"],
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Instance connected to service",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }

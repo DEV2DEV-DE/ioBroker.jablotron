@@ -39,7 +39,6 @@ class Jablotron extends utils.Adapter {
 		axios.defaults.timeout = 5000; // set timeout for any request to 5 seconds
 
 		this.on('ready', this.onReady.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
 		this.on('unload', this.onUnload.bind(this));
 	}
 
@@ -64,9 +63,6 @@ class Jablotron extends utils.Adapter {
 	 */
 	async onReady() {
 		try {
-			// Create all states needed for the adapter
-			await this.createObjectStructure();
-
 			// the polling interval should never be less than 10 seconds to prevent possisble bans
 			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
 			// username and password are mandatory
@@ -376,26 +372,6 @@ class Jablotron extends utils.Adapter {
 		} catch (e) {
 			callback();
 		}
-	}
-
-	/**
-	 * Is called if a subscribed state changes
-	 * @param {string} id
-	 * @param {ioBroker.State | null | undefined} state
-	 */
-	onStateChange(id, state) {
-		if (state) {
-			// The state was changed
-			this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-		} else {
-			// The state was deleted
-			this.log.info(`state ${id} deleted`);
-		}
-	}
-
-	async createObjectStructure() {
-		await this.setObjectNotExistsAsync('info.connection', { type: 'state', common: { name: 'Communication with service working', type: 'boolean', role: 'indicator.connected', read: true, write: false }, native: {}, });
-		this.log.debug('Created static object structure');
 	}
 
 }

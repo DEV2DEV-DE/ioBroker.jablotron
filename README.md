@@ -38,6 +38,10 @@ https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 ## Changelog
 ### **WORK IN PROGRESS**
 * Fixed typo
+* Encrypt sensitive data in instance config
+* Add min and max for poll interval
+* Removed unused code
+* Do not create static states in code
 
 ### 0.0.4 (2023-12-03)
 * Fixed wrong state type for data type 'object'
