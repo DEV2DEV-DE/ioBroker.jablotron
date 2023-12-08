@@ -43,9 +43,6 @@ You need to re-enter your password in the instance settings if you already used 
 ### **WORK IN PROGRESS**
 * Fixed wrong structure in readme
 
-### 0.0.6 (2023-12-08)
-* Fixed wrong structure in readme
-
 ### 0.0.5 (2023-12-06)
 * Fixed typo
 * Encrypt sensitive data in instance config
