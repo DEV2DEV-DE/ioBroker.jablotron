@@ -35,12 +35,14 @@ Report any bug, issue or request as a GitHub-Issue: https://github.com/DEV2DEV-D
 https://www.jablotron.com/de/katalog-produktu/alarme/jablotron-100/
 
 ## Release Notes
+
 ### 0.0.5
 The storage of sensitive data in the instance config has been changed.
 
 You need to re-enter your password in the instance settings if you already used an older version < 0.0.5
 
 ## Changelog
+
 ### 0.0.5 (2023-12-06)
 * Fixed typo
 * Encrypt sensitive data in instance config
