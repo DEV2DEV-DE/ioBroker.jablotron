@@ -148,7 +148,7 @@
     "pollInterval": 10,
     "readSections": true,
     "readProgrammableGates": true,
-    "readThermoDevices": true
+    "readThermoDevices": false
   },
   "encryptedNative": [
     "password"
