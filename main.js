@@ -64,7 +64,7 @@ class Jablotron extends utils.Adapter {
 	async onReady() {
 		try {
 			// the polling interval should never be less than 10 seconds to prevent possisble bans
-			if (this.config.pollInterval < 10) throw new Error('Poll interval must be at least 10 seconds');
+			if (this.config.pollInterval < 5) throw new Error('Poll interval must be at least 10 seconds');
 			// username and password are mandatory
 			if (!this.config.username || !this.config.password) throw new Error('Username and password are mandatory');
 
