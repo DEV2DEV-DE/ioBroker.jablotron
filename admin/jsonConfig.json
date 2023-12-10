@@ -38,6 +38,6 @@
 			"type": "checkbox",
 			"label": "Read thermoDevices",
 			"newLine": true
-		},
+		}
 	}
 }
