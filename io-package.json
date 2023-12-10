@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.0.7",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "Fixed issue with restarts due to timeouts",
+        "de": "Problem behoben mit Neustarts aufgrund von Timeouts",
+        "ru": "Исправлена проблема с перезагрузками из-за таймов",
+        "pt": "Problema fixo com reinícios devido a timeouts",
+        "nl": "Gereserveerd met herstart door time-outs",
+        "fr": "Problème fixe avec les redémarrages en raison des timeouts",
+        "it": "Problema fisso con riavviamenti a causa di timeout",
+        "es": "Cuestiones fijas con reinicios debido a los timeouts",
+        "pl": "Wydarzenia z restartem ze względu na czasowe opóźnienia",
+        "uk": "Виправлена проблема з рештою через час",
+        "zh-cn": "由于时间的推断,固定问题与其它艺术无关。"
+      },
       "0.0.7": {
         "en": "Fixed wrong structure in readme",
         "de": "Fehlerhafte Struktur im Readme behoben",

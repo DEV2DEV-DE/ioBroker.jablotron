@@ -40,7 +40,7 @@ The storage of sensitive data in the instance config has been changed.
 You need to re-enter your password in the instance settings if you already used an older version < 0.0.5
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.1.0 (2023-12-10)
 * Fixed issue with restarts due to timeouts
 
 ### 0.0.7 (2023-12-08)
