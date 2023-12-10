@@ -26,17 +26,17 @@
 		},
 		"readSections": {
 			"type": "checkbox",
-			"label": "Read sections",
+			"label": "sections",
 			"newLine": true
 		},
 		"readProgrammableGates": {
 			"type": "checkbox",
-			"label": "Read programmableGates",
+			"label": "programmableGates",
 			"newLine": true
 		},
 		"readThermoDevices": {
 			"type": "checkbox",
-			"label": "Read thermoDevices",
+			"label": "thermoDevices",
 			"newLine": true
 		}
 	}
