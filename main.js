@@ -36,7 +36,7 @@ class Jablotron extends utils.Adapter {
 		this.states = [];
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
-		axios.defaults.timeout = 5000; // set timeout for any request to 5 seconds
+		axios.defaults.timeout = 4000; // set timeout for any request to 4 seconds
 
 		this.on('ready', this.onReady.bind(this));
 		this.on('unload', this.onUnload.bind(this));
@@ -127,17 +127,21 @@ class Jablotron extends utils.Adapter {
 	async getExtendedData(headers, cookie) {
 		try {
 			const services = await this.getServices(headers, cookie);
-			await this.createFolder('services', 'All services related to the account');
-			for (const key in services) {
-				const service = services[key];
-				const serviceId = service['service-id'];
-				await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
-				for (const state in service) {
-					await this.doCreateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+			if (services && services.length > 0) {
+				await this.createFolder('services', 'All services related to the account');
+				for (const key in services) {
+					const service = services[key];
+					const serviceId = service['service-id'];
+					await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
+					for (const state in service) {
+						await this.doCreateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+					}
+					if (this.config.readSections) await this.getSections(headers, cookie, serviceId);
+					if (this.config.readProgrammableGates) await this.getProgrammableGates(headers, cookie, serviceId);
+					if (this.config.readThermoDevices) await this.getThermoDevices(headers, cookie, serviceId);
 				}
-				await this.getSections(headers, cookie, serviceId);
-				await this.getProgrammableGates(headers, cookie, serviceId);
-				await this.getThermoDevices(headers, cookie, serviceId);
+			} else {
+				this.log.debug('No services found');
 			}
 		} catch (error) {
 			this.log.error('getExtendedData: ' + error);
@@ -174,8 +178,13 @@ class Jablotron extends utils.Adapter {
 			this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
 			return response.data['data']['services'];
 		} catch (error) {
-			this.log.error('getServices: ' + error);
-			throw error;
+			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
+				this.log.debug('Timeout exceeded requesting services');
+				return [];
+			} else {
+				this.log.error('getServices: ' + error);
+				throw error;
+			}
 		}
 	}
 
@@ -212,8 +221,12 @@ class Jablotron extends utils.Adapter {
 				}
 			}
 		} catch (error) {
-			this.log.error('getSections: ' + error);
-			throw error;
+			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
+				this.log.debug('Timeout exceeded requesting sections');
+			} else {
+				this.log.error('getSections: ' + error);
+				throw error;
+			}
 		}
 	}
 
@@ -250,8 +263,12 @@ class Jablotron extends utils.Adapter {
 				}
 			}
 		} catch (error) {
-			this.log.error('getProgrammableGates: ' + error);
-			throw error;
+			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
+				this.log.debug('Timeout exceeded requesting programmableGates');
+			} else {
+				this.log.error('getProgrammableGates: ' + error);
+				throw error;
+			}
 		}
 	}
 
@@ -275,8 +292,12 @@ class Jablotron extends utils.Adapter {
 			const response = await axios.post(url, payload, { headers });
 			this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 		} catch (error) {
-			this.log.error('getThermoDevices: ' + error);
-			throw error;
+			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
+				this.log.debug('Timeout exceeded requesting thermoDevices');
+			} else {
+				this.log.error('getThermoDevices: ' + error);
+				throw error;
+			}
 		}
 	}
 

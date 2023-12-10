@@ -145,7 +145,10 @@
   "native": {
     "username": "",
     "password": "",
-    "pollInterval": 10
+    "pollInterval": 10,
+    "readSections": true,
+    "readProgrammableGates": true,
+    "readThermoDevices": true
   },
   "encryptedNative": [
     "password"

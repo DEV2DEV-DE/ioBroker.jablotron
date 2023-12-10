@@ -16,8 +16,28 @@
 			"type": "number",
 			"label": "Poll Interval (seconds)",
 			"newLine": true,
-			"min": 10,
+			"min": 5,
 			"max": 300
-		}
+		},
+		"labelRead": {
+			"type": "text",
+			"label": "Select the objects to be read from server:",
+			"newLine": true
+		},
+		"readSections": {
+			"type": "checkbox",
+			"label": "Read sections",
+			"newLine": true
+		},
+		"readProgrammableGates": {
+			"type": "checkbox",
+			"label": "Read programmableGates",
+			"newLine": true
+		},
+		"readThermoDevices": {
+			"type": "checkbox",
+			"label": "Read thermoDevices",
+			"newLine": true
+		},
 	}
 }
