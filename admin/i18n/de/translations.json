@@ -2,5 +2,6 @@
 	"jablotron adapter settings": "Adaptereinstellungen für jablotron",
 	"username": "Benutzername",
 	"password": "Kennwort",
-	"pollInterval": "Abfrageintervall (in Sekunden)"
+	"pollInterval": "Abfrageintervall (in Sekunden)",
+	"labelRead": "Vom Server zu lesende Datensegmente:"
 }
