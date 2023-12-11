@@ -134,7 +134,7 @@ class Jablotron extends utils.Adapter {
 					const serviceId = service['service-id'];
 					await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
 					for (const state in service) {
-						await this.doCreateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+						await this.createOrUpdateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
 					}
 					if (this.config.readSections) await this.getSections(headers, cookie, serviceId);
 					if (this.config.readProgrammableGates) await this.getProgrammableGates(headers, cookie, serviceId);
@@ -213,11 +213,11 @@ class Jablotron extends utils.Adapter {
 				const id = sections[section]['cloud-component-id'];
 				await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
 				for (const key in sections[section]) {
-					await this.doCreateState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
+					await this.createOrUpdateState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
 				}
 				const state = states.find(state => state['cloud-component-id'] === id);
 				if (state) { // es wurde ein state zur section gefunden
-					await this.doCreateState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
+					await this.createOrUpdateState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
 				}
 			}
 		} catch (error) {
@@ -255,10 +255,10 @@ class Jablotron extends utils.Adapter {
 				const id = gates[gate]['cloud-component-id'];
 				await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
 				for (const key in gates[gate]) {
-					await this.doCreateState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
+					await this.createOrUpdateState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
 					const state = states.find(state => state['cloud-component-id'] === id);
 					if (state) { // es wurde ein state zum gate gefunden
-						await this.doCreateState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
+						await this.createOrUpdateState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
 					}
 				}
 			}
@@ -335,7 +335,7 @@ class Jablotron extends utils.Adapter {
 	 * @param {boolean} write
 	 * @param {any} value
 	 */
-	async doCreateState(id, name, read, write, value) {
+	async createOrUpdateState(id, name, read, write, value) {
 		let stateType = '';
 		let stateRole = '';
 		switch (typeof (value)) {
