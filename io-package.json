@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "Improved readability\nSelect data segments read from server\nChanged User-Agent in requests",
+        "de": "Verbesserte Lesbarkeit\nWählen Sie Datensegmente aus, die vom Server gelesen werden\nBenutzer-Agent in Anfragen geändert",
+        "ru": "Улучшенная читаемость\nВыбрать сегменты данных читать с сервера\nИзмененный User-Agent в запросах",
+        "pt": "Melhor legibilidade\nSelecione segmentos de dados lidos do servidor\nAlterado User-Agent em pedidos",
+        "nl": "Verbeteringsvermogen\nSelect gegevens van server\nVeranderde User-Agent in verzoeken",
+        "fr": "Amélioration de la lisibilité\nSélectionnez les segments de données lues depuis le serveur\nChangement d'utilisateur-agent dans les demandes",
+        "it": "Maggiore leggibilità\nSelezionare i segmenti di dati letti dal server\nModificato User-Agent nelle richieste",
+        "es": "Mejora de la legibilidad\nSeleccione segmentos de datos leídos desde el servidor\nCambio de Usuario-Agente en solicitudes",
+        "pl": "Poprawa czytelności\nStrona internetowa programu\nZmienił User-Agent",
+        "uk": "Покращена працездатність\nВиберіть сегменти даних, які читаються з сервера\nЗмінений Користувач-Агент по запиту",
+        "zh-cn": "A. 改进读者资格\n取用数据部分\n请求使用的改变"
+      },
       "0.1.0": {
         "en": "Fixed issue with restarts due to timeouts",
         "de": "Problem behoben mit Neustarts aufgrund von Timeouts",
@@ -80,19 +93,6 @@
         "pl": "Implementacja poprawek wspomnianych w przeglądzie",
         "uk": "Реалізовані поліпшення, зазначені в огляді",
         "zh-cn": "实施审查中提到的改进"
-      },
-      "0.0.2": {
-        "en": "Provide an appropriate role for any state\nReadme extended\nOutput 'thermoDevices' in debug log",
-        "de": "Stellen Sie eine angemessene Rolle für jeden Staat\nReader erweitert\nAusgangsthermo Geräte im Debug-Log",
-        "ru": "Обеспечить соответствующую роль для любого государства\nReadme расширен\nВыход термо Устройства в debug log",
-        "pt": "Fornecer um papel adequado para qualquer estado\nReadme estendida\nTermo de saída Dispositivos em log de depuração",
-        "nl": "Een geschikte rol voor elke staat\nReadme verlengd\nVertaling: Vertaling:",
-        "fr": "Fournir un rôle approprié à tout État\nReadme extended\nThermomètre de sortie Appareils dans le journal debug",
-        "it": "Fornire un ruolo appropriato per qualsiasi stato\nReadme estesa\nTermo di uscita Dispositivi nel registro di debug",
-        "es": "Proporcionar un papel adecuado para cualquier Estado\nReadme extended\nTermo de salida Dispositivos en tronco de depuración",
-        "pl": "Umożliwia to odpowiednią rolę dla każdego państwa\nReady extended\nTermos Urządzenia w debug log",
-        "uk": "Забезпечити відповідну роль будь-якого стану\nПродовжити читання\nВипадковий термо Пристрої в журналі Debug",
-        "zh-cn": "向任何国家提供适当作用\n阅读摘要\n产出 D. 被盗入黑色金属"
       }
     },
     "titleLang": {
