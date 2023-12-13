@@ -43,6 +43,7 @@ You need to re-enter your password in the instance settings if you already used 
 ### **WORK IN PROGRESS**
 * Improved readability
 * Select data segments read from server
+* Changed User-Agent in requests
 
 ### 0.1.0 (2023-12-10)
 * Fixed issue with restarts due to timeouts

@@ -10,13 +10,15 @@ const utils = require('@iobroker/adapter-core');
 const axios = require('axios').default;
 
 const baseUrl = 'https://api.jablonet.net/api/2.2';
+const userAgent = 'Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1';
 const headers = {
 	'x-vendor-id': 'JABLOTRON:Jablotron',
 	'Content-Type': 'application/json',
 	'x-client-version': 'MYJ-PUB-ANDROID-12',
 	'accept-encoding': '*',
 	'Accept': 'application/json',
-	'Accept-Language': 'en'
+	'Accept-Language': 'en',
+	'User-Agent': userAgent
 };
 
 class Jablotron extends utils.Adapter {
