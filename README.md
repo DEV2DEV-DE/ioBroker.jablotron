@@ -22,7 +22,7 @@ The adapter only connects to the cloud of the manufacturer. It's currently not p
 
 ### Forum
 
-Discuss your test experience here: https://forum.iobroker.net/topic/70798/test-adapter-jablotron-v-0-0-x
+Discuss your test experience here: https://forum.iobroker.net/topic/70798
 
 ## Known issues
 * As far as known by now, sensors, switches and other devices have to be configured as a 'programmable gate' to be readable.
