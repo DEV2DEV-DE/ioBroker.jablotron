@@ -70,8 +70,8 @@ class Jablotron extends utils.Adapter {
 	 */
 	async onReady() {
 		try {
-			// the polling interval should never be less than 5 seconds to prevent possisble bans
-			if (this.config.pollInterval < 5) throw new Error('Poll interval must be at least 5 seconds');
+			// the polling interval should never be less than 10 seconds to prevent possisble bans
+			if (this.config.pollInterval < 5) throw new Error('Poll interval must be at least 10 seconds');
 			// username and password are mandatory
 			if (!this.config.username || !this.config.password) throw new Error('Username and password are mandatory');
 
@@ -100,7 +100,7 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} username
 	 * @param {string} password
 	 */
-	async fetchSessionId(username, password) {
+	async fetchSessionId(username, password, getData = true) {
 		try {
 			const url = `${baseUrl}/userAuthorize.json`;
 			const data = {
@@ -116,7 +116,7 @@ class Jablotron extends utils.Adapter {
 				this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
 				this.log.debug('Session-ID: ' + sessionId);
 				this.log.debug('Fetching initial data from jablonet.net');
-				await this.getExtendedData(headers, sessionId);
+				if (getData) await this.getExtendedData(headers, sessionId);
 				return sessionId;
 			} else {
 				throw new Error('No session id received');
@@ -134,14 +134,14 @@ class Jablotron extends utils.Adapter {
 	 * @throws {Error} If unable to connect to jablonet.net
 	 */
 	async refreshSessionId() {
-		this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
+		this.sessionId = await this.fetchSessionId(this.config.username, this.config.password, false);
 		this.isConnected = this.sessionId !== '';
 		if (this.isConnected) {
 			this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
 		} else {
-			throw new Error('Not connect to jablonet.net');
+			throw new Error('Error refreshing session id');
 		}
-	}
+}
 
 	/**
 	 * get data from jablonet cloud
