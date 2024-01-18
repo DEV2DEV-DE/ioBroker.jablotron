@@ -141,7 +141,7 @@ class Jablotron extends utils.Adapter {
 		} else {
 			throw new Error('Error refreshing session id');
 		}
-}
+	}
 
 	/**
 	 * get data from jablonet cloud
