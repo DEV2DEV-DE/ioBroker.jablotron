@@ -9,14 +9,19 @@
 const utils = require('@iobroker/adapter-core');
 const axios = require('axios').default;
 
+const EAI_MAX_ERRORS = 5;
+const SESSION_LIFETIME = 3600; // 1 hour
+
 const baseUrl = 'https://api.jablonet.net/api/2.2';
+const userAgent = 'Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1';
 const headers = {
 	'x-vendor-id': 'JABLOTRON:Jablotron',
 	'Content-Type': 'application/json',
 	'x-client-version': 'MYJ-PUB-ANDROID-12',
 	'accept-encoding': '*',
 	'Accept': 'application/json',
-	'Accept-Language': 'en'
+	'Accept-Language': 'en',
+	'User-Agent': userAgent
 };
 
 class Jablotron extends utils.Adapter {
@@ -32,8 +37,10 @@ class Jablotron extends utils.Adapter {
 
 		this.isConnected = false;
 		this.sessionId = '';
+		this.sessionExpires = 0;
 		this.timeout = undefined;
 		this.states = [];
+		this.eai_error = 0;
 
 		axios.defaults.withCredentials = true; // force axios to use cookies
 		axios.defaults.timeout = 4000; // set timeout for any request to 4 seconds
@@ -73,6 +80,7 @@ class Jablotron extends utils.Adapter {
 
 			// create interval for recurring tasks
 			if (this.isConnected) {
+				this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
 				this.log.debug('Setting up recurring refresh');
 				this.recurringRefresh();
 				// subscribe to all state changes
@@ -105,6 +113,7 @@ class Jablotron extends utils.Adapter {
 			const cookie = response.headers['set-cookie'];
 			if (cookie) {
 				const sessionId = cookie.toString().split(';')[0];
+				this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
 				this.log.debug('Session-ID: ' + sessionId);
 				this.log.debug('Fetching initial data from jablonet.net');
 				await this.getExtendedData(headers, sessionId);
@@ -120,12 +129,31 @@ class Jablotron extends utils.Adapter {
 	}
 
 	/**
+	 * Refreshes the session ID by fetching it from the server using the provided username and password.
+	 * Updates the isConnected flag and session expiration time accordingly.
+	 * @throws {Error} If unable to connect to jablonet.net
+	 */
+	async refreshSessionId() {
+		this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
+		this.isConnected = this.sessionId !== '';
+		if (this.isConnected) {
+			this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
+		} else {
+			throw new Error('Not connect to jablonet.net');
+		}
+	}
+
+	/**
 	 * get data from jablonet cloud
 	 * @param {object} headers
 	 * @param {string} cookie
 	 */
 	async getExtendedData(headers, cookie) {
 		try {
+			if (Date.now() > this.sessionExpires) {
+				this.log.debug('Session expired. Trying to login again');
+				await this.refreshSessionId();
+			}
 			const services = await this.getServices(headers, cookie);
 			if (services && services.length > 0) {
 				await this.createFolder('services', 'All services related to the account');
@@ -134,7 +162,7 @@ class Jablotron extends utils.Adapter {
 					const serviceId = service['service-id'];
 					await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
 					for (const state in service) {
-						await this.doCreateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
+						await this.createOrUpdateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
 					}
 					if (this.config.readSections) await this.getSections(headers, cookie, serviceId);
 					if (this.config.readProgrammableGates) await this.getProgrammableGates(headers, cookie, serviceId);
@@ -144,8 +172,12 @@ class Jablotron extends utils.Adapter {
 				this.log.debug('No services found');
 			}
 		} catch (error) {
-			this.log.error('getExtendedData: ' + error);
-			throw error;
+			if (error.response && error.response.status >= 400) {
+				this.log.warn(`Communication error ${error.response.status} (${error.code}). Trying to login again`);
+				await this.refreshSessionId();
+			} else {
+				this.terminate('Error in getExtendedData: ' + error);
+			}
 		}
 	}
 
@@ -175,14 +207,18 @@ class Jablotron extends utils.Adapter {
 			headers['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/serviceListGet.json`;
 			const response = await axios.post(url, payload, { headers });
+			this.eai_error = 0;
 			this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
 			return response.data['data']['services'];
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting services');
-				return [];
+				return false;
+			} else if (error.code === 'EAI_AGAIN' && this.eai_error < EAI_MAX_ERRORS) {
+				this.log.debug('DNS-Lookup failed requesting services');
+				this.eai_error++;
+				return false;
 			} else {
-				this.log.error('getServices: ' + error);
 				throw error;
 			}
 		}
@@ -205,6 +241,7 @@ class Jablotron extends utils.Adapter {
 			headers['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/sectionsGet.json`;
 			const response = await axios.post(url, payload, { headers });
+			this.eai_error = 0;
 			this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
 			await this.createFolder(`services.${serviceId}.sections`, 'All sections related to the service');
 			const sections = response.data['data']['sections'];
@@ -213,18 +250,20 @@ class Jablotron extends utils.Adapter {
 				const id = sections[section]['cloud-component-id'];
 				await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
 				for (const key in sections[section]) {
-					await this.doCreateState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
+					await this.createOrUpdateState(`services.${serviceId}.sections.${id}.${key}`, `${key}`, true, false, sections[section][key]);
 				}
 				const state = states.find(state => state['cloud-component-id'] === id);
 				if (state) { // es wurde ein state zur section gefunden
-					await this.doCreateState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
+					await this.createOrUpdateState(`services.${serviceId}.sections.${id}.state`, 'state', true, false, state.state);
 				}
 			}
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting sections');
+			} else if (error.code === 'EAI_AGAIN' && this.eai_error < EAI_MAX_ERRORS) {
+				this.eai_error++;
+				this.log.debug('DNS-Lookup failed requesting sections');
 			} else {
-				this.log.error('getSections: ' + error);
 				throw error;
 			}
 		}
@@ -247,6 +286,7 @@ class Jablotron extends utils.Adapter {
 			headers['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/programmableGatesGet.json`;
 			const response = await axios.post(url, payload, { headers });
+			this.eai_error = 0;
 			this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
 			await this.createFolder(`services.${serviceId}.programmable-gates`, 'All programmable gates related to the service');
 			const gates = response.data['data']['programmableGates'];
@@ -255,18 +295,20 @@ class Jablotron extends utils.Adapter {
 				const id = gates[gate]['cloud-component-id'];
 				await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
 				for (const key in gates[gate]) {
-					await this.doCreateState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
+					await this.createOrUpdateState(`services.${serviceId}.programmable-gates.${id}.${key}`, `${key}`, true, false, gates[gate][key]);
 					const state = states.find(state => state['cloud-component-id'] === id);
 					if (state) { // es wurde ein state zum gate gefunden
-						await this.doCreateState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
+						await this.createOrUpdateState(`services.${serviceId}.programmable-gates.${id}.state`, 'state', true, false, state.state);
 					}
 				}
 			}
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting programmableGates');
+			} else if (error.code === 'EAI_AGAIN' && this.eai_error < EAI_MAX_ERRORS) {
+				this.eai_error++;
+				this.log.debug('DNS-Lookup failed requesting programmableGates');
 			} else {
-				this.log.error('getProgrammableGates: ' + error);
 				throw error;
 			}
 		}
@@ -290,12 +332,15 @@ class Jablotron extends utils.Adapter {
 			headers['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/thermoDevicesGet.json`;
 			const response = await axios.post(url, payload, { headers });
+			this.eai_error = 0;
 			this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting thermoDevices');
+			} else if (error.code === 'EAI_AGAIN' && this.eai_error < EAI_MAX_ERRORS) {
+				this.eai_error++;
+				this.log.debug('DNS-Lookup failed requesting thermoDevices');
 			} else {
-				this.log.error('getThermoDevices: ' + error);
 				throw error;
 			}
 		}
@@ -335,7 +380,7 @@ class Jablotron extends utils.Adapter {
 	 * @param {boolean} write
 	 * @param {any} value
 	 */
-	async doCreateState(id, name, read, write, value) {
+	async createOrUpdateState(id, name, read, write, value) {
 		let stateType = '';
 		let stateRole = '';
 		switch (typeof (value)) {
