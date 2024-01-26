@@ -14,14 +14,19 @@
 		},
 		"pollInterval": {
 			"type": "number",
-			"label": "Poll Interval (seconds)",
+			"label": "pollInterval",
 			"newLine": true,
 			"min": 5,
 			"max": 300
 		},
+		"logResponse": {
+			"type": "checkbox",
+			"label": "logResponse",
+			"newLine": true
+		},
 		"labelRead": {
 			"type": "header",
-			"text": "Select the objects to be read from server:",
+			"text": "labelRead",
 			"size": 3
 		},
 		"readSections": {

@@ -3,5 +3,6 @@
 	"username": "Username",
 	"password": "Password",
 	"pollInterval": "Polling interval (in seconds)",
+	"logResponse": "Log response (debug only)",
 	"labelRead": "Select data segments to be read from server:"
 }

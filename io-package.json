@@ -159,6 +159,7 @@
     "username": "",
     "password": "",
     "pollInterval": 10,
+    "logResponse": false,
     "readSections": true,
     "readProgrammableGates": true,
     "readThermoDevices": false

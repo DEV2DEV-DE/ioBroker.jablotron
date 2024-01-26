@@ -43,6 +43,8 @@ You need to re-enter your password in the instance settings if you already used 
 ### **WORK IN PROGRESS**
 * Catch EAI_AGAIN
 * Automatic refresh of session-id
+* Changed headers to prevent caching
+* Catch other HTTP errors
 
 ### 0.1.0 (2023-12-10)
 * Fixed issue with restarts due to timeouts

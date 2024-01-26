@@ -9,19 +9,22 @@
 const utils = require('@iobroker/adapter-core');
 const axios = require('axios').default;
 
-const EAI_MAX_ERRORS = 5;
-const SESSION_LIFETIME = 3600; // 1 hour
+const EAI_MAX_ERRORS = 12;
+const REQUEST_TIMEOUT = 10000; // default timeout for request: 10 seconds
 
 const baseUrl = 'https://api.jablonet.net/api/2.2';
 const userAgent = 'Mozilla/5.0 (iPhone13,2; U; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) Version/10.0 Mobile/15E148 Safari/602.1';
-const headers = {
+const requestHeader = {
 	'x-vendor-id': 'JABLOTRON:Jablotron',
 	'Content-Type': 'application/json',
 	'x-client-version': 'MYJ-PUB-ANDROID-12',
 	'accept-encoding': '*',
 	'Accept': 'application/json',
 	'Accept-Language': 'en',
-	'User-Agent': userAgent
+	'User-Agent': userAgent,
+	'Cache-Control': 'private, no-cache, no-store, must-revalidate, max-age=0',
+	'Pragma': 'no-cache',
+	'Expires': '0'
 };
 
 class Jablotron extends utils.Adapter {
@@ -37,13 +40,12 @@ class Jablotron extends utils.Adapter {
 
 		this.isConnected = false;
 		this.sessionId = '';
-		this.sessionExpires = 0;
 		this.timeout = undefined;
 		this.states = [];
 		this.eai_error = 0;
+		this.isReady = false;
 
-		axios.defaults.withCredentials = true; // force axios to use cookies
-		axios.defaults.timeout = 4000; // set timeout for any request to 4 seconds
+		axios.defaults.timeout = REQUEST_TIMEOUT; // set timeout for any request
 
 		this.on('ready', this.onReady.bind(this));
 		this.on('unload', this.onUnload.bind(this));
@@ -62,7 +64,8 @@ class Jablotron extends utils.Adapter {
 	 */
 	set isConnected(value) {
 		this._isConnected = value;
-		this.setState('info.connection', { val: value, ack: true });
+		// only update the state if the adapter is ready (prevent error messages on startup)
+		if (this.isReady) this.setState('info.connection', { val: value, ack: true });
 	}
 
 	/**
@@ -70,17 +73,19 @@ class Jablotron extends utils.Adapter {
 	 */
 	async onReady() {
 		try {
-			// the polling interval should never be less than 10 seconds to prevent possisble bans
-			if (this.config.pollInterval < 5) throw new Error('Poll interval must be at least 10 seconds');
+			// the polling interval should never be less than 5 seconds to prevent possisble bans
+			if (this.config.pollInterval < 5) throw new Error('Poll interval must be at least 5 seconds');
 			// username and password are mandatory
 			if (!this.config.username || !this.config.password) throw new Error('Username and password are mandatory');
 
+			this.isReady = true;
 			this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 			this.isConnected = this.sessionId !== '';
 
-			// create interval for recurring tasks
+			// create interval for recurring tasks and fetch initial data
 			if (this.isConnected) {
-				this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
+				this.log.debug('Fetching initial data from jablonet.net');
+				await this.getExtendedData(requestHeader, this.sessionId);
 				this.log.debug('Setting up recurring refresh');
 				this.recurringRefresh();
 				// subscribe to all state changes
@@ -100,26 +105,27 @@ class Jablotron extends utils.Adapter {
 	 * @param {string} username
 	 * @param {string} password
 	 */
-	async fetchSessionId(username, password, getData = true) {
+	async fetchSessionId(username, password) {
 		try {
-			const url = `${baseUrl}/userAuthorize.json`;
+			const timestamp = new Date().getTime();
+			const url = `${baseUrl}/userAuthorize.json?timestamp=${timestamp}`;
 			const data = {
 				'login': username,
 				'password': password
 			};
 			this.log.debug('Fetching new session id');
-			const response = await axios.post(url, data, { headers });
-			this.log.info('Logged in to jablonet api');
-			const cookie = response.headers['set-cookie'];
-			if (cookie) {
-				const sessionId = cookie.toString().split(';')[0];
-				this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
-				this.log.debug('Session-ID: ' + sessionId);
-				this.log.debug('Fetching initial data from jablonet.net');
-				if (getData) await this.getExtendedData(headers, sessionId);
-				return sessionId;
-			} else {
-				throw new Error('No session id received');
+			const response = await axios.post(url, data, { headers: requestHeader });
+			if (this.config.logResponse) this.log.debug('Response-Header: ' + JSON.stringify(response.headers));
+			if (response.headers && response.headers.includes('Set-Cookie')) {
+				const cookie = response.headers['set-cookie'];
+				if (cookie) {
+					this.log.info('Logged in to jablonet api');
+					const sessionId = cookie.toString().split(';')[0];
+					this.log.debug('Session-ID: ' + sessionId);
+					return sessionId;
+				} else {
+					throw new Error('Login failed. No session id received');
+				}
 			}
 		} catch (error) {
 			this.log.error(error);
@@ -134,49 +140,49 @@ class Jablotron extends utils.Adapter {
 	 * @throws {Error} If unable to connect to jablonet.net
 	 */
 	async refreshSessionId() {
-		this.sessionId = await this.fetchSessionId(this.config.username, this.config.password, false);
+		this.sessionId = await this.fetchSessionId(this.config.username, this.config.password);
 		this.isConnected = this.sessionId !== '';
-		if (this.isConnected) {
-			this.sessionExpires = Date.now() + SESSION_LIFETIME * 1000;
-		} else {
+		if (!this.isConnected) {
 			throw new Error('Error refreshing session id');
 		}
 	}
 
 	/**
 	 * get data from jablonet cloud
-	 * @param {object} headers
+	 * @param {object} header
 	 * @param {string} cookie
 	 */
-	async getExtendedData(headers, cookie) {
+	async getExtendedData(header, cookie) {
 		try {
-			if (Date.now() > this.sessionExpires) {
-				this.log.debug('Session expired. Trying to login again');
-				await this.refreshSessionId();
-			}
-			const services = await this.getServices(headers, cookie);
+			const services = await this.getServices(header, cookie);
 			if (services && services.length > 0) {
 				await this.createFolder('services', 'All services related to the account');
 				for (const key in services) {
+					await this.createChannel(`services.${key}`, `Service ${key}`);
 					const service = services[key];
 					const serviceId = service['service-id'];
 					await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
 					for (const state in service) {
 						await this.createOrUpdateState(`services.${serviceId}.${state}`, `${state}`, true, false, service[state]);
 					}
-					if (this.config.readSections) await this.getSections(headers, cookie, serviceId);
-					if (this.config.readProgrammableGates) await this.getProgrammableGates(headers, cookie, serviceId);
-					if (this.config.readThermoDevices) await this.getThermoDevices(headers, cookie, serviceId);
+					if (this.config.readSections) await this.getSections(header, cookie, serviceId);
+					if (this.config.readProgrammableGates) await this.getProgrammableGates(header, cookie, serviceId);
+					if (this.config.readThermoDevices) await this.getThermoDevices(header, cookie, serviceId);
 				}
 			} else {
 				this.log.debug('No services found');
 			}
 		} catch (error) {
-			if (error.response && error.response.status >= 400) {
-				this.log.warn(`Communication error ${error.response.status} (${error.code}). Trying to login again`);
-				await this.refreshSessionId();
+			if (error.response && error.response.status == 401) {
+				this.log.debug('Session expired. Trying to login again');
+				// wait to fetch new session id
+				this.setTimeout(() => {
+					this.refreshSessionId();
+				}, 30000);
+			} else if (error.response && error.response.status >= 400) {
+				this.log.warn(`Communication error ${error.response.status} (${error.code}).`);
 			} else {
-				this.terminate('Error in getExtendedData: ' + error);
+				this.log.debug('Error in getExtendedData: ' + error);
 			}
 		}
 	}
@@ -187,37 +193,37 @@ class Jablotron extends utils.Adapter {
 	 */
 	async recurringRefresh() {
 		this.timeout = this.setTimeout(() => {
-			this.log.debug('Fetch data from jablonet.net');
-			this.getExtendedData(headers, this.sessionId);
+			//this.log.debug('Fetch data from jablonet.net');
+			this.getExtendedData(requestHeader, this.sessionId);
 			this.recurringRefresh();
 		}, this.config.pollInterval * 1000);
 	}
 
 	/**
 	 * read all services related to the account
-	 * @param {object} headers
+	 * @param {object} header
 	 * @param {string} cookie
 	 */
-	async getServices(headers, cookie) {
+	async getServices(header, cookie) {
 		try {
 			const payload = {
 				'list-type': 'EXTENDED',
 				'visibility': 'DEFAULT'
 			};
-			headers['Cookie'] = cookie;
+			header['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/serviceListGet.json`;
-			const response = await axios.post(url, payload, { headers });
+			const response = await axios.post(url, payload, { headers: header});
 			this.eai_error = 0;
-			this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
+			if (this.config.logResponse) this.log.debug('serviceListGet: ' + JSON.stringify(response.data));
 			return response.data['data']['services'];
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting services');
-				return false;
+				return null;
 			} else if (error.code === 'EAI_AGAIN' && this.eai_error < EAI_MAX_ERRORS) {
 				this.log.debug('DNS-Lookup failed requesting services');
 				this.eai_error++;
-				return false;
+				return null;
 			} else {
 				throw error;
 			}
@@ -226,11 +232,11 @@ class Jablotron extends utils.Adapter {
 
 	/**
 	 * read all sections related to a given service
-	 * @param {object} headers
+	 * @param {object} header
 	 * @param {string} cookie
 	 * @param {string} serviceId
 	 */
-	async getSections(headers, cookie, serviceId) {
+	async getSections(header, cookie, serviceId) {
 		try {
 			const payload = {
 				'connect-device': true,
@@ -238,11 +244,11 @@ class Jablotron extends utils.Adapter {
 				'service-id': serviceId,
 				'service-states': true
 			};
-			headers['Cookie'] = cookie;
+			header['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/sectionsGet.json`;
-			const response = await axios.post(url, payload, { headers });
+			const response = await axios.post(url, payload, { headers: header });
 			this.eai_error = 0;
-			this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
+			if (this.config.logResponse) this.log.debug('sectionsGet: ' + JSON.stringify(response.data));
 			await this.createFolder(`services.${serviceId}.sections`, 'All sections related to the service');
 			const sections = response.data['data']['sections'];
 			const states = response.data['data']['states'];
@@ -271,11 +277,11 @@ class Jablotron extends utils.Adapter {
 
 	/**
 	 * read all programmable gates related to a given service
-	 * @param {object} headers
+	 * @param {object} header
 	 * @param {string} cookie
 	 * @param {string} serviceId
 	 */
-	async getProgrammableGates(headers, cookie, serviceId) {
+	async getProgrammableGates(header, cookie, serviceId) {
 		try {
 			const payload = {
 				'connect-device': true,
@@ -283,11 +289,11 @@ class Jablotron extends utils.Adapter {
 				'service-id': serviceId,
 				'service-states': true
 			};
-			headers['Cookie'] = cookie;
+			header['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/programmableGatesGet.json`;
-			const response = await axios.post(url, payload, { headers });
+			const response = await axios.post(url, payload, { headers: header });
 			this.eai_error = 0;
-			this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
+			if (this.config.logResponse) this.log.debug('programmableGatesGet: ' + JSON.stringify(response.data));
 			await this.createFolder(`services.${serviceId}.programmable-gates`, 'All programmable gates related to the service');
 			const gates = response.data['data']['programmableGates'];
 			const states = response.data['data']['states'];
@@ -317,11 +323,11 @@ class Jablotron extends utils.Adapter {
 	/**
 	 * read all thermo devices related to a given service
 	 * currently work in prograss due to missing examples
-	 * @param {object} headers
+	 * @param {object} header
 	 * @param {string} cookie
 	 * @param {string} serviceId
 	 */
-	async getThermoDevices(headers, cookie, serviceId) {
+	async getThermoDevices(header, cookie, serviceId) {
 		try {
 			const payload = {
 				'connect-device': true,
@@ -329,11 +335,11 @@ class Jablotron extends utils.Adapter {
 				'service-id': serviceId,
 				'service-states': true
 			};
-			headers['Cookie'] = cookie;
+			header['Cookie'] = cookie;
 			const url = `${baseUrl}/JA100/thermoDevicesGet.json`;
-			const response = await axios.post(url, payload, { headers });
+			const response = await axios.post(url, payload, { headers: header });
 			this.eai_error = 0;
-			this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
+			if (this.config.logResponse) this.log.debug('thermoDevicesGet: ' + JSON.stringify(response.data));
 		} catch (error) {
 			if (error.response && error.response.status === 504 || error.code === 'ECONNABORTED') {
 				this.log.debug('Timeout exceeded requesting thermoDevices');

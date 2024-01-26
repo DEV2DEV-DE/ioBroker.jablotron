@@ -3,5 +3,6 @@
 	"username": "Benutzername",
 	"password": "Kennwort",
 	"pollInterval": "Abfrageintervall (in Sekunden)",
+	"logResponse": "Antworten protokollieren (nur für Debugging)",
 	"labelRead": "Vom Server zu lesende Datensegmente:"
 }
