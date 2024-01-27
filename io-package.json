@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "news": {
       "0.1.1": {
         "en": "Improved readability\nSelect data segments read from server\nChanged User-Agent in requests",
