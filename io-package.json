@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "news": {
+      "0.1.3": {
+        "en": "Catch EAI_AGAIN\nAutomatic refresh of session-id\nChanged headers to prevent caching\nCatch other HTTP errors",
+        "de": "Fang EAI_AGAIN\nAutomatische Erfrischung von Session-ID\nÄnderte Kopfzeilen, um das Caching zu verhindern\nAndere HTTP-Fehler einfangen",
+        "ru": "EAI_AGAIN\nАвтоматическое обновление сеанса-id\nИзмененные головки для предотвращения кэширования\nПоймать другие ошибки HTTP",
+        "pt": "Apanhar EAI_AGAIN\nAtualização automática de sessão-id\nCabeçalhos alterados para evitar caching\nPegue outros erros HTTP",
+        "nl": "EAI_AGAIN vangen\nAutomatisch vernieuwen van sessie-id\nVeranderde headers om caching te voorkomen\nAndere HTTP-fouten vangen",
+        "fr": "Capturer l'IAE\nActualisation automatique de session-id\nChangement d'en-têtes pour empêcher la mise en cache\nCapturer d'autres erreurs HTTP",
+        "it": "Prendi EAI_AGAIN\nRinfresco automatico di session-id\nIntestazioni modificate per prevenire il caching\nPrendi altri errori HTTP",
+        "es": "Coge EAI_AGAIN\nRefrigerio automático de la sesión-id\nCabeceras modificadas para prevenir el caché\nCaptura otros errores de HTTP",
+        "pl": "Połowy EAI _ AGAIN\nAutomatyczne odświeżanie session- id\nZmienione nagłówki, aby zapobiec buforowaniu\nZłap inne błędy HTTP",
+        "uk": "Кетч EAI_AGAIN\nАвтоматичне оновлення сеансу\nЗмінені заголовки для запобігання кешування\nКетч інші помилки HTTP",
+        "zh-cn": "抓住爱尔\n自动刷新会话编号\n更改了信头以防止缓存\n抓取其他 HTTP 错误"
+      },
       "0.1.1": {
         "en": "Improved readability\nSelect data segments read from server\nChanged User-Agent in requests",
         "de": "Verbesserte Lesbarkeit\nWählen Sie Datensegmente aus, die vom Server gelesen werden\nBenutzer-Agent in Anfragen geändert",
@@ -80,19 +93,6 @@
         "pl": "Fixed bad state type for data type object",
         "uk": "Виправлено неправильний тип стану об'єкта типу даних",
         "zh-cn": "数据类型目标的固定错误状况"
-      },
-      "0.0.3": {
-        "en": "Implemented improvements mentioned in review",
-        "de": "Implementierte Verbesserungen in der Überprüfung",
-        "ru": "Внедренные улучшения, упомянутые в обзоре",
-        "pt": "Melhorias implementadas mencionadas na revisão",
-        "nl": "Verbeteringen vermeld in beoordeling",
-        "fr": "Améliorations mises en œuvre mentionnées dans l ' examen",
-        "it": "Miglioramenti attuati menzionati nella recensione",
-        "es": "Mejoras aplicadas mencionadas en el examen",
-        "pl": "Implementacja poprawek wspomnianych w przeglądzie",
-        "uk": "Реалізовані поліпшення, зазначені в огляді",
-        "zh-cn": "实施审查中提到的改进"
       }
     },
     "titleLang": {
