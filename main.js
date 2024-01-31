@@ -116,7 +116,7 @@ class Jablotron extends utils.Adapter {
 			this.log.debug('Fetching new session id');
 			const response = await axios.post(url, data, { headers: requestHeader });
 			if (this.config.logResponse) this.log.debug('Response-Header: ' + JSON.stringify(response.headers));
-			if (response.headers && response.headers.has('Set-Cookie')) {
+			if (response.headers && response.headers.has('set-cookie')) {
 				const cookie = response.headers['set-cookie'];
 				if (cookie) {
 					this.log.info('Logged in to jablonet api');

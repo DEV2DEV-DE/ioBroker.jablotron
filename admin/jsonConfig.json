@@ -17,7 +17,11 @@
 			"label": "pollInterval",
 			"newLine": true,
 			"min": 5,
-			"max": 300
+			"max": 300,
+			"default": 10,
+			"sm": 6,
+			"md": 4,
+			"lg": 3
 		},
 		"logResponse": {
 			"type": "checkbox",
