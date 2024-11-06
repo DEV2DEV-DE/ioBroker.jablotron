@@ -101,9 +101,8 @@
     "keywords": [
       "jablotron alarm security"
     ],
-    "license": "MIT",
+    "licenseInformation": "MIT",
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "jablotron.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/DEV2DEV-DE/ioBroker.jablotron/main/admin/jablotron.png",
