@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "news": {
+      "0.1.5": {
+        "en": "Update to ESlint 9",
+        "de": "Update auf ESlint 9",
+        "ru": "Обновление к ESlint 9",
+        "pt": "Atualização para ESlint 9",
+        "nl": "Bijwerken naar ESlint 9",
+        "fr": "Mise à jour de ESlint 9",
+        "it": "Aggiornamento a ESlint 9",
+        "es": "Actualización a ESlint 9",
+        "pl": "Aktualizacja do ESlint 9",
+        "uk": "Оновлення до ESlint 9",
+        "zh-cn": "更新到 Eslint 9"
+      },
       "0.1.4": {
         "en": "Updated dependencies",
         "de": "Aktualisierte Abhängigkeiten",
@@ -99,7 +112,9 @@
       "DEV2DEV-DE <github@dev2dev.de>"
     ],
     "keywords": [
-      "jablotron", "alarm", "security"
+      "jablotron",
+      "alarm",
+      "security"
     ],
     "licenseInformation": {
       "type": "free",
