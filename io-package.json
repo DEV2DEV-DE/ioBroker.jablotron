@@ -127,7 +127,10 @@
     "keywords": [
       "jablotron alarm security"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "icon": "jablotron.png",
