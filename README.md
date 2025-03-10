@@ -89,7 +89,7 @@ You need to re-enter your password in the instance settings if you already used 
 ## License
 MIT License
 
-Copyright (c) 2024 DEV2DEV-DE
+Copyright (c) 2025 DEV2DEV-DE
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
