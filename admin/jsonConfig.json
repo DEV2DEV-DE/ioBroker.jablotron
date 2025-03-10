@@ -5,12 +5,22 @@
 		"username": {
 			"type": "text",
 			"label": "username",
-			"newLine": true
+			"newLine": true,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"password": {
 			"type": "password",
 			"label": "password",
-			"newLine": false
+			"newLine": false,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"pollInterval": {
 			"type": "number",
@@ -19,14 +29,21 @@
 			"min": 5,
 			"max": 300,
 			"default": 10,
-			"sm": 6,
-			"md": 4,
-			"lg": 3
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"logResponse": {
 			"type": "checkbox",
 			"label": "logResponse",
-			"newLine": true
+			"newLine": true,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"labelRead": {
 			"type": "header",
@@ -36,17 +53,32 @@
 		"readSections": {
 			"type": "checkbox",
 			"label": "sections",
-			"newLine": true
+			"newLine": true,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"readProgrammableGates": {
 			"type": "checkbox",
 			"label": "programmableGates",
-			"newLine": true
+			"newLine": true,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		},
 		"readThermoDevices": {
 			"type": "checkbox",
 			"label": "thermoDevices",
-			"newLine": true
+			"newLine": true,
+			"xs": 12,
+			"sm": 12,
+			"md": 6,
+			"lg": 4,
+			"xl": 4
 		}
 	}
 }

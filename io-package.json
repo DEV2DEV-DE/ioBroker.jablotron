@@ -1,8 +1,34 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.3",
+    "version": "0.1.5",
     "news": {
+      "0.1.5": {
+        "en": "Update to ESlint 9",
+        "de": "Update auf ESlint 9",
+        "ru": "Обновление к ESlint 9",
+        "pt": "Atualização para ESlint 9",
+        "nl": "Bijwerken naar ESlint 9",
+        "fr": "Mise à jour de ESlint 9",
+        "it": "Aggiornamento a ESlint 9",
+        "es": "Actualización a ESlint 9",
+        "pl": "Aktualizacja do ESlint 9",
+        "uk": "Оновлення до ESlint 9",
+        "zh-cn": "更新到 Eslint 9"
+      },
+      "0.1.4": {
+        "en": "Updated dependencies",
+        "de": "Aktualisierte Abhängigkeiten",
+        "ru": "Обновленные зависимости",
+        "pt": "Dependências atualizadas",
+        "nl": "Bijgewerkte afhankelijkheden",
+        "fr": "Dépendances actualisées",
+        "it": "Dipendenze aggiornate",
+        "es": "Dependencias actualizadas",
+        "pl": "Aktualizacja zależności",
+        "uk": "Оновлені залежності",
+        "zh-cn": "更新的依赖关系"
+      },
       "0.1.3": {
         "en": "Catch EAI_AGAIN\nAutomatic refresh of session-id\nChanged headers to prevent caching\nCatch other HTTP errors",
         "de": "Fang EAI_AGAIN\nAutomatische Erfrischung von Session-ID\nÄnderte Kopfzeilen, um das Caching zu verhindern\nAndere HTTP-Fehler einfangen",
@@ -54,45 +80,6 @@
         "pl": "Fixed bad structure in readme",
         "uk": "Виправлено неправильну структуру в чителю",
         "zh-cn": "阅读错误结构"
-      },
-      "0.0.6": {
-        "en": "Fixed wrong structure in readme",
-        "de": "Fehlerhafte Struktur im Readme behoben",
-        "ru": "Исправлена неправильная структура в readme",
-        "pt": "Estrutura errada fixa no readme",
-        "nl": "Verkeerde structuur in het boek",
-        "fr": "Structure incorrecte fixe dans readme",
-        "it": "Struttura sbagliata fissa in readme",
-        "es": "Estructura incorrecta fija en el readme",
-        "pl": "Fixed bad structure in readme",
-        "uk": "Виправлено неправильну структуру в чителю",
-        "zh-cn": "阅读错误结构"
-      },
-      "0.0.5": {
-        "en": "Fixed typo\nEncrypt sensitive data in instance config\nAdd min and max for poll interval\nRemoved unused code\nDo not create static states in code",
-        "de": "Fester Typo\nVerschlüsseln sensible Daten zum Beispiel config\nMin und max für das Umfrageintervall hinzufügen\nUnbenutzter Code entfernt\nErstellen Sie keine statischen Zustände im Code",
-        "ru": "Фиксированная typo\nЗашифровать чувствительные данные в примере config\nДобавьте мин и макс для интервала опроса\nУдаленный неиспользованный код\nНе создавать статические состояния в коде",
-        "pt": "Tipopo fixo\nCriptografar dados confidenciais em instância config\nAdicionar min e max para intervalo de pesquisa\nRemovido código não utilizado\nNão crie estados estáticos no código",
-        "nl": "Vertaling:\nVertaling:\nVoeg min en max toe voor poll interval\nVerwijder onbruikbare code\nMaak geen statische staten in code",
-        "fr": "Typo fixe\nDécrypter les données sensibles dans la configuration\nAjouter min et max pour l'intervalle de poll\nSupprimer le code inutilisé\nNe créez pas d'états statiques dans le code",
-        "it": "Tipo fisso\nCrittografare i dati sensibili in caso di configurazione\nAggiungere min e max per intervallo di poll\nCodice inutilizzato rimosso\nNon creare stati statici in codice",
-        "es": "Tipo fijo\nEncriptar datos sensibles en configuración de instancia\nAñadir min y max para intervalo de encuesta\nEliminado código no utilizado\nNo crear estados estáticos en código",
-        "pl": "Fixed typo\nWskaźnik wrażliwych danych na przykład\nAdd min and max for poll interval interval (ang.)\nRemove nieużywany kod\nNie tworzy stanów statycznych w kodeksie",
-        "uk": "Фіксований тип\nЗашифрувати конфіденційні дані в налаштуваннях екземпляра\nДодати хв і максимум для інтервалу опитування\nВидалити невикористаний код\nНе створювати статичні стани в коді",
-        "zh-cn": "固定型号\n例如,加密敏感数据\n投票间隔增加分钟\n取消未使用的守则\n不要造成守则静态状态"
-      },
-      "0.0.4": {
-        "en": "Fixed wrong state type for data type 'object'",
-        "de": "Fester falscher Zustandstyp für Datentypobjekt",
-        "ru": "Исправлен неправильный государственный тип объекта типа данных",
-        "pt": "Tipo de estado errado fixo para objeto tipo de dados",
-        "nl": "Verkeerde staatstype",
-        "fr": "Type fixe d'état incorrect pour objet de type de données",
-        "it": "Tipo di stato sbagliato fisso per oggetto tipo di dati",
-        "es": "Tipo de estado incorrecto fijo para el tipo de objeto de tipo de datos",
-        "pl": "Fixed bad state type for data type object",
-        "uk": "Виправлено неправильний тип стану об'єкта типу даних",
-        "zh-cn": "数据类型目标的固定错误状况"
       }
     },
     "titleLang": {
@@ -125,14 +112,15 @@
       "DEV2DEV-DE <github@dev2dev.de>"
     ],
     "keywords": [
-      "jablotron alarm security"
+      "jablotron",
+      "alarm",
+      "security"
     ],
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
     },
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "jablotron.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/DEV2DEV-DE/ioBroker.jablotron/main/admin/jablotron.png",
@@ -149,7 +137,7 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=3.3.22"
+        "js-controller": ">=5.0.19"
       }
     ],
     "globalDependencies": [
