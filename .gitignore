@@ -20,3 +20,6 @@ admin/i18n/*/flat.txt
 simpleLogin.js
 .vscode/launch.json
 .response.json
+
+#ignore .commitinfo created by ioBroker release script
+.commitinfo
