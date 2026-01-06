@@ -1,34 +1,8 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.9",
+    "version": "0.1.7",
     "news": {
-      "0.1.9": {
-        "en": "Fixed check & bot errors",
-        "de": "Feste Kontroll- und Bot-Fehler",
-        "ru": "Исправленные ошибки Check & Bot",
-        "pt": "Erros de verificação & bot fixos",
-        "nl": "Vaste controle-botfouten",
-        "fr": "Correction des erreurs & bot",
-        "it": "Controllo fisso & errori bot",
-        "es": "Errores de cheque fijo \" bot",
-        "pl": "Naprawiono błędy check & bot",
-        "uk": "Виправлено помилку перевірки та помилки бота",
-        "zh-cn": "固定检查机器人错误( B)"
-      },
-      "0.1.8": {
-        "en": "Fixed broken dependency tree",
-        "de": "Feste gebrochene Abhängigkeit Baum",
-        "ru": "Сломанное дерево зависимостей",
-        "pt": "Fixo árvore de dependência quebrada",
-        "nl": "Vast gebroken afhankelijkheidsboom",
-        "fr": "Arbre de dépendance cassé fixe",
-        "it": "Albero di dipendenza rotto fisso",
-        "es": "Árbol de dependencia roto fijo",
-        "pl": "Stałe uszkodzone drzewo zależności",
-        "uk": "Виправлено зламаний дерево залежностей",
-        "zh-cn": "固定断裂依赖树"
-      },
       "0.1.7": {
         "en": "Dependencies updated\nRemoved deprecated async functions",
         "de": "Ausgaben aktualisiert\nEntfernen deprecated async-Funktionen",
