@@ -1,6 +1,6 @@
 {
   "name": "iobroker.jablotron",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Connects to the Jablotron cloud to access your security system",
   "author": {
     "name": "DEV2DEV-DE",
