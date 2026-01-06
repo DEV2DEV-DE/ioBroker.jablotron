@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "news": {
+      "0.1.7": {
+        "en": "Dependencies updated\nRemoved deprecated async functions",
+        "de": "Ausgaben aktualisiert\nEntfernen deprecated async-Funktionen",
+        "ru": "Обновленные зависимости\nУдаление устаревших функций асинхронизации",
+        "pt": "Dependências atualizadas\nFunções de assincronização desactualizadas removidas",
+        "nl": "Afhankelijkheden bijgewerkt\nVerwijderde verouderde async-functies",
+        "fr": "Dépendances actualisées\nSupprimé les fonctions d'async obsolètes",
+        "it": "Dipendenze aggiornate\nFunzioni asincroni smontate",
+        "es": "Actualización de las dependencias\nFunciones de asinc eliminadas",
+        "pl": "Aktualizacja zależności\nUsunięte funkcje async",
+        "uk": "Залежність оновлено\nВидалено депресовані функції асинхронних пристроїв",
+        "zh-cn": "更新的依赖关系\n删除已贬值的同步函数"
+      },
       "0.1.6": {
         "en": "Dependencies updated",
         "de": "Ausgaben aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "Wydarzenia z restartem ze względu na czasowe opóźnienia",
         "uk": "Виправлена проблема з рештою через час",
         "zh-cn": "由于时间的推断,固定问题与其它艺术无关。"
-      },
-      "0.0.7": {
-        "en": "Fixed wrong structure in readme",
-        "de": "Fehlerhafte Struktur im Readme behoben",
-        "ru": "Исправлена неправильная структура в readme",
-        "pt": "Estrutura errada fixa no readme",
-        "nl": "Verkeerde structuur in het boek",
-        "fr": "Structure incorrecte fixe dans readme",
-        "it": "Struttura sbagliata fissa in readme",
-        "es": "Estructura incorrecta fija en el readme",
-        "pl": "Fixed bad structure in readme",
-        "uk": "Виправлено неправильну структуру в чителю",
-        "zh-cn": "阅读错误结构"
       }
     },
     "titleLang": {
