@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "news": {
+      "0.1.8": {
+        "en": "Fixed broken dependency tree",
+        "de": "Feste gebrochene Abhängigkeit Baum",
+        "ru": "Сломанное дерево зависимостей",
+        "pt": "Fixo árvore de dependência quebrada",
+        "nl": "Vast gebroken afhankelijkheidsboom",
+        "fr": "Arbre de dépendance cassé fixe",
+        "it": "Albero di dipendenza rotto fisso",
+        "es": "Árbol de dependencia roto fijo",
+        "pl": "Stałe uszkodzone drzewo zależności",
+        "uk": "Виправлено зламаний дерево залежностей",
+        "zh-cn": "固定断裂依赖树"
+      },
       "0.1.7": {
         "en": "Dependencies updated\nRemoved deprecated async functions",
         "de": "Ausgaben aktualisiert\nEntfernen deprecated async-Funktionen",
@@ -80,19 +93,6 @@
         "pl": "Poprawa czytelności\nStrona internetowa programu\nZmienił User-Agent",
         "uk": "Покращена працездатність\nВиберіть сегменти даних, які читаються з сервера\nЗмінений Користувач-Агент по запиту",
         "zh-cn": "A. 改进读者资格\n取用数据部分\n请求使用的改变"
-      },
-      "0.1.0": {
-        "en": "Fixed issue with restarts due to timeouts",
-        "de": "Problem behoben mit Neustarts aufgrund von Timeouts",
-        "ru": "Исправлена проблема с перезагрузками из-за таймов",
-        "pt": "Problema fixo com reinícios devido a timeouts",
-        "nl": "Gereserveerd met herstart door time-outs",
-        "fr": "Problème fixe avec les redémarrages en raison des timeouts",
-        "it": "Problema fisso con riavviamenti a causa di timeout",
-        "es": "Cuestiones fijas con reinicios debido a los timeouts",
-        "pl": "Wydarzenia z restartem ze względu na czasowe opóźnienia",
-        "uk": "Виправлена проблема з рештою через час",
-        "zh-cn": "由于时间的推断,固定问题与其它艺术无关。"
       }
     },
     "titleLang": {
