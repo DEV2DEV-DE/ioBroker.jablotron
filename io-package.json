@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "news": {
+      "0.1.6": {
+        "en": "Dependencies updated",
+        "de": "Ausgaben aktualisiert",
+        "ru": "Обновленные зависимости",
+        "pt": "Dependências atualizadas",
+        "nl": "Afhankelijkheden bijgewerkt",
+        "fr": "Dépendances actualisées",
+        "it": "Dipendenze aggiornate",
+        "es": "Actualización de las dependencias",
+        "pl": "Aktualizacja zależności",
+        "uk": "Залежність оновлено",
+        "zh-cn": "更新的依赖关系"
+      },
       "0.1.5": {
         "en": "Update to ESlint 9",
         "de": "Update auf ESlint 9",
@@ -117,8 +130,8 @@
       "security"
     ],
     "licenseInformation": {
-      "type": "free",
-      "license": "MIT"
+      "license": "MIT",
+      "type": "free"
     },
     "platform": "Javascript/Node.js",
     "icon": "jablotron.png",
@@ -142,7 +155,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=5.1.13"
+        "admin": ">=7.4.10"
       }
     ]
   },
