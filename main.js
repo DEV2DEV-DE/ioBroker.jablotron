@@ -169,10 +169,10 @@ class Jablotron extends utils.Adapter {
             if (services && services.length > 0) {
                 await this.createFolder('services', 'All services related to the account');
                 for (const key in services) {
-                    await this.createChannel(`services.${key}`, `Service ${key}`);
+                    await this.createNewChannel(`services.${key}`, `Service ${key}`);
                     const service = services[key];
                     const serviceId = service['service-id'];
-                    await this.createChannel(`services.${serviceId}`, `Service ${serviceId}`);
+                    await this.createNewChannel(`services.${serviceId}`, `Service ${serviceId}`);
                     for (const state in service) {
                         await this.createOrUpdateState(
                             `services.${serviceId}.${state}`,
@@ -283,7 +283,7 @@ class Jablotron extends utils.Adapter {
             const states = response.data['data']['states'];
             for (const section in sections) {
                 const id = sections[section]['cloud-component-id'];
-                await this.createChannel(`services.${serviceId}.sections.${id}`, `${id}`);
+                await this.createNewChannel(`services.${serviceId}.sections.${id}`, `${id}`);
                 for (const key in sections[section]) {
                     await this.createOrUpdateState(
                         `services.${serviceId}.sections.${id}.${key}`,
@@ -347,7 +347,7 @@ class Jablotron extends utils.Adapter {
             const states = response.data['data']['states'];
             for (const gate in gates) {
                 const id = gates[gate]['cloud-component-id'];
-                await this.createChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
+                await this.createNewChannel(`services.${serviceId}.programmable-gates.${id}`, `${id}`);
                 for (const key in gates[gate]) {
                     await this.createOrUpdateState(
                         `services.${serviceId}.programmable-gates.${id}.${key}`,
@@ -425,7 +425,7 @@ class Jablotron extends utils.Adapter {
     async createFolder(id, name) {
         const stateId = this.name2id(id);
         if (!this.existsState(stateId)) {
-            await this.extendObjectAsync(stateId, { type: 'folder', common: { name: `${name}` }, native: {} });
+            this.extendObject(stateId, { type: 'folder', common: { name: `${name}` }, native: {} });
             this.states.push(stateId);
         }
     }
@@ -436,10 +436,10 @@ class Jablotron extends utils.Adapter {
      * @param id - The ID of the channel to be created.
      * @param name - The name of the channel to be created.
      */
-    async createChannel(id, name) {
+    async createNewChannel(id, name) {
         const stateId = this.name2id(id);
         if (!this.existsState(stateId)) {
-            await this.extendObjectAsync(stateId, { type: 'channel', common: { name: `${name}` }, native: {} });
+            this.extendObject(stateId, { type: 'channel', common: { name: `${name}` }, native: {} });
             this.states.push(stateId);
         }
     }
@@ -480,14 +480,14 @@ class Jablotron extends utils.Adapter {
         const stateId = this.name2id(id);
         if (!this.existsState(stateId)) {
             // @ts-expect-error: False positive. Invalid types will result in an error. There will never be an invalid type here.
-            await this.extendObjectAsync(stateId, {
+            this.extendObject(stateId, {
                 type: 'state',
                 common: { name: `${name}`, type: `${stateType}`, role: stateRole, read: read, write: write },
                 native: {},
             });
             this.states.push(stateId);
         }
-        await this.setStateAsync(stateId, value, true);
+        this.setState(stateId, value, true);
     }
 
     /**
