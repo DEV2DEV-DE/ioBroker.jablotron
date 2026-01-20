@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "jablotron",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "news": {
+      "0.1.8": {
+        "en": "New release including dependabot fixes",
+        "de": "Neue Veröffentlichung einschließlich abhängigabot Fixes",
+        "ru": "Новый релиз, включающий исправления на иждивении",
+        "pt": "Nova versão incluindo correções de dependebot",
+        "nl": "Nieuwe release inclusief dependabot fixes",
+        "fr": "Nouvelle version incluant les corrections de dépendance",
+        "it": "Nuova versione con correzioni dipendeabot",
+        "es": "Nueva liberación incluyendo los arreglos de dependabot",
+        "pl": "Nowe wydanie wraz z poprawkami zależnymi",
+        "uk": "Новий реліз, в тому числі запобіжники",
+        "zh-cn": "新的释放,包括依赖修正"
+      },
       "0.1.7": {
         "en": "Dependencies updated\nRemoved deprecated async functions",
         "de": "Ausgaben aktualisiert\nEntfernen deprecated async-Funktionen",
