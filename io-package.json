@@ -16,19 +16,6 @@
         "uk": "Новий реліз, в тому числі запобіжники",
         "zh-cn": "新的释放,包括依赖修正"
       },
-      "0.1.7": {
-        "en": "Dependencies updated\nRemoved deprecated async functions",
-        "de": "Ausgaben aktualisiert\nEntfernen deprecated async-Funktionen",
-        "ru": "Обновленные зависимости\nУдаление устаревших функций асинхронизации",
-        "pt": "Dependências atualizadas\nFunções de assincronização desactualizadas removidas",
-        "nl": "Afhankelijkheden bijgewerkt\nVerwijderde verouderde async-functies",
-        "fr": "Dépendances actualisées\nSupprimé les fonctions d'async obsolètes",
-        "it": "Dipendenze aggiornate\nFunzioni asincroni smontate",
-        "es": "Actualización de las dependencias\nFunciones de asinc eliminadas",
-        "pl": "Aktualizacja zależności\nUsunięte funkcje async",
-        "uk": "Залежність оновлено\nВидалено депресовані функції асинхронних пристроїв",
-        "zh-cn": "更新的依赖关系\n删除已贬值的同步函数"
-      },
       "0.1.6": {
         "en": "Dependencies updated",
         "de": "Ausgaben aktualisiert",
