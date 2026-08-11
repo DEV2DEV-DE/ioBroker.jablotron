@@ -87,6 +87,8 @@ You need to re-enter your password in the instance settings if you already used 
 * Readme extended
 * Output 'thermoDevices' in debug log
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## References
 * https://github.com/ioBroker/AdapterRequests/issues/755
 * https://github.com/hajekmi/myjablotron
